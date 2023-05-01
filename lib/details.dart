@@ -48,13 +48,13 @@ class DetailPage extends StatelessWidget {
                   ),
                   Positioned(
                     bottom: 110,
-                    left: 150,
+                    left: 145,
                     child: InkWell(
                       onTap: () async {
-                         print('Trailer is' + trailers!.toString());
-                            if (trailers != null && trailers!.isNotEmpty) {
-                              await launch(trailers![0]);
-                            }
+                        print('Trailer is' + trailers!.toString());
+                        if (trailers != null && trailers!.isNotEmpty) {
+                          await launch(trailers![0]);
+                        }
                       },
                       child: Icon(
                         Icons.play_circle_outlined,
