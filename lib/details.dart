@@ -47,17 +47,16 @@ class DetailPage extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    bottom: 115,
-                    left: 140,
+                    bottom: 110,
+                    left: 150,
                     child: InkWell(
-                      onTap:() async{
+                      onTap: () async {
                          print('Trailer is' + trailers!.toString());
                             if (trailers != null && trailers!.isNotEmpty) {
                               await launch(trailers![0]);
                             }
-                      } ,
-                      child:
-                      Icon(
+                      },
+                      child: Icon(
                         Icons.play_circle_outlined,
                         size: 80,
                         color: Colors.red,
@@ -80,7 +79,7 @@ class DetailPage extends StatelessWidget {
                   //       if (trailers != null && trailers!.isNotEmpty) {
                   //         await launch(trailers![0] );
                   //       }
-                        
+
                   //     },
                   //     child: TextFont(
                   //       text: 'Watch Trailer',
@@ -88,7 +87,7 @@ class DetailPage extends StatelessWidget {
                   //     ),
                   //   ),
                   // ),
-                 
+
                   Positioned(
                       child: Padding(
                     padding: const EdgeInsets.only(left: 15.0, top: 15.0),

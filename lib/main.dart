@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'FontStyle/text_style.dart';
 import 'Screen Pages/search_page.dart';
@@ -22,19 +24,78 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: Colors.transparent,
       ),
-      home: const HomaPage(),
+      home: SplashScreen(),
     );
   }
 }
 
-class HomaPage extends StatefulWidget {
-  const HomaPage({super.key});
-
+class SplashScreen extends StatefulWidget {
   @override
-  State<HomaPage> createState() => _HomaPageState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class _HomaPageState extends State<HomaPage> {
+class SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(
+        Duration(seconds: 3),
+        () => Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage())));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.deepPurple, Colors.red],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.movie_rounded,
+                size: 100,
+                color: Colors.black,
+              ),
+              Flexible(
+                child: DefaultTextStyle(
+                    child: Text('123Movies'),
+                    style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70)),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: LinearProgressIndicator(
+                  backgroundColor: Colors.black,
+                  minHeight: 7,
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   // to store the list of movies from the api
   List trendingMovies = [];
   List popularMovies = [];
@@ -42,7 +103,7 @@ class _HomaPageState extends State<HomaPage> {
   List upcomingMovies = [];
   List tvShows = [];
 
-// Function to fetch the movies from the api
+//  to fetch the movies from the api
   final String apiKey = '3b3e044406dcc9dfd98161380ff671d0';
   final String apiReadAccessToken =
       'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYjNlMDQ0NDA2ZGNjOWRmZDk4MTYxMzgwZmY2NzFkMCIsInN1YiI6IjY0NDY2YzU4YzhmM2M0MDQ3NTQ1MGZlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qZZN8H99oxomNUmi1oUgZwfNMybxtvJ1T0-Bd_Yfmhw';
@@ -54,7 +115,7 @@ class _HomaPageState extends State<HomaPage> {
   }
 
   Future fetchMovies() async {
-    //initiailizing  TMDB object
+    //initiailizing  TMDB
     TMDB tmdbWithCustomLogs = TMDB(ApiKeys(apiKey, apiReadAccessToken),
         logConfig: const ConfigLogger(
           showLogs: true,
@@ -62,12 +123,10 @@ class _HomaPageState extends State<HomaPage> {
         ));
     //fetching the  movies from the api
 
-
     Map trendingMovieResult =
         await tmdbWithCustomLogs.v3.trending.getTrending();
     Map topRatedMovieResult = await tmdbWithCustomLogs.v3.movies.getTopRated();
     Map upcomingMovieResult = await tmdbWithCustomLogs.v3.movies.getUpcoming();
-    // for tv shows
     Map tvShowResult = await tmdbWithCustomLogs.v3.tv.getPopular();
 
     //updating the state of the app
@@ -77,7 +136,6 @@ class _HomaPageState extends State<HomaPage> {
       topRatedMovies = topRatedMovieResult['results'];
       upcomingMovies = upcomingMovieResult['results'];
       tvShows = tvShowResult['results'];
-
     });
   }
 
