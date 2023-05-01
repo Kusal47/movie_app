@@ -155,11 +155,11 @@ class _SearchPageState extends State<SearchPage> {
                                               size: 14),
                                         ],
                                       ),
-                                      // TextFont(
-                                      //   text: movie['overview'],
-                                      //   overflow: TextOverflow.ellipsis,
-                                      //   size: 16,
-                                      // )
+                                      TextFont(
+                                        text: movie['overview'],
+                                        overflow: TextOverflow.ellipsis,
+                                        size: 16,
+                                      )
                                     ],
                                   ),
                                 ),
