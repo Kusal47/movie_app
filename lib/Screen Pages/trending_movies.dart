@@ -3,25 +3,30 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../FontStyle/text_style.dart';
 import '../details.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class TrendingMovies extends StatelessWidget {
   //adding the constructor to receive the list of movies
-  const TrendingMovies({super.key, required this.trending});
+  TrendingMovies({super.key, required this.trending, required this.apiKey});
 
   //receive the list of movies from the main.dart
   final List trending;
+  final String apiKey;
+  Future<List<dynamic>> getMovieCast(int movieId) async {
+    final url =
+        'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+    final data = jsonDecode(response.body);
+
+    return data['cast'];
+  }
 
   Future<String?> fetchTrailer(int movieId) async {
     final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['results'].isNotEmpty) {
-        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
-      }
-    }
-    return null;
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
+    final data = jsonDecode(response.body);
+        return data['cast'];
+
   }
 
   @override
@@ -44,6 +49,7 @@ class TrendingMovies extends StatelessWidget {
                 return InkWell(
                     onTap: () async {
                       final trailer = await fetchTrailer(trending[index]['id']);
+                      final cast = await getMovieCast(trending[index]['id']);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -61,9 +67,11 @@ class TrendingMovies extends StatelessWidget {
                                         ['release_date'],
                                     movieOverview: trending[index]['overview'],
                                     trailers: trailer != null ? [trailer] : [],
+                                    cast: cast != null ? cast : [],
                                   )));
                     },
                     child: Container(
+                        padding: EdgeInsets.only(right: 5),
                         width: 140,
                         child: Column(
                           children: [

@@ -14,6 +14,7 @@ class DetailPage extends StatelessWidget {
     this.movieReleaseDate,
     this.movieOverview,
     this.trailers,
+    this.cast,
   });
   final String? movienName,
       posterImage,
@@ -22,6 +23,7 @@ class DetailPage extends StatelessWidget {
       movieReleaseDate,
       movieOverview;
   final List<String>? trailers;
+  final List? cast;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +31,8 @@ class DetailPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.black,
         body: ListView(
-          physics: BouncingScrollPhysics(
-              decelerationRate: ScrollDecelerationRate.normal),
+          // physics: BouncingScrollPhysics(
+          //     decelerationRate: ScrollDecelerationRate.normal),
           children: [
             Container(
               height: 300,
@@ -178,6 +180,63 @@ class DetailPage extends StatelessWidget {
                 ),
               ],
             ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFont(
+                    text: 'Cast',
+                    size: 30,
+                  ),
+                ),
+                SizedBox(
+                  height: 200,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                    itemCount: cast!.length,
+                    itemBuilder: ((context, index) {
+                      return cast![index]['profile_path']!=null? Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                              padding: EdgeInsets.only(left: 15, top: 10),
+                              height: 90,
+                              width: 90,
+                              child: Image.network(
+                                'https://image.tmdb.org/t/p/w500/' +
+                                    cast![index]['profile_path'],
+                                fit: BoxFit.cover,
+                              )),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFont(
+                                  text: cast![index]['name'] != null
+                                      ? cast![index]['name']
+                                      : 'Loading...',
+                                  size: 14,
+                                ),
+                                TextFont(
+                                  text: cast![index]['character']!= null
+                                      ? cast![index]['character']
+                                      : 'Loading...',
+                                  size: 12,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ):Container();
+                    }),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

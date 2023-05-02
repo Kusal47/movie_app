@@ -7,6 +7,10 @@ import 'package:movieapp/FontStyle/text_style.dart';
 import '../details.dart';
 
 class SearchPage extends StatefulWidget {
+  final String apiKey;
+
+  SearchPage({required this.apiKey});
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -16,7 +20,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<Map<String, dynamic>> _fetchSearchResults(String query) async {
     final url = Uri.parse(
-        'https://api.themoviedb.org/3/search/movie?api_key=3b3e044406dcc9dfd98161380ff671d0&query=$query');
+        'https://api.themoviedb.org/3/search/movie?api_key=${widget.apiKey}&query=$query');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -34,17 +38,25 @@ class _SearchPageState extends State<SearchPage> {
       });
     });
   }
- Future<String?> fetchTrailer(int movieId) async {
-    final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
+
+  Future<List<dynamic>> getMovieCast(int movieId) async {
+    final url =
+        'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=${widget.apiKey}';
+
+    final response = await http.get(Uri.parse(url));
+    final data = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['results'].isNotEmpty) {
-        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
-      }
+      return data['cast'];
+    } else {
+      throw Exception('Failed to load search results');
     }
-    return null;
   }
+
+  Future<String?> fetchTrailer(int movieId) async {
+    await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=${widget.apiKey}&language=en-US'));
+  }
+
   final controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -88,17 +100,21 @@ class _SearchPageState extends State<SearchPage> {
             ),
             Flexible(
               child: SizedBox(
-                height: height/1.15,
+                width: MediaQuery.of(context).size.width,
+                height: height / 1.15,
                 child: ListView.builder(
                   physics: BouncingScrollPhysics(
                       decelerationRate: ScrollDecelerationRate.normal),
                   itemCount: _searchResults.length,
                   itemBuilder: (context, index) {
                     final movie = _searchResults[index];
-            
+
                     return InkWell(
                       onTap: () async {
-                     final trailer = await fetchTrailer(_searchResults[index]['id']);
+                        final trailer =
+                            await fetchTrailer(_searchResults[index]['id']);
+                        final cast =
+                            await getMovieCast(_searchResults[index]['id']);
 
                         Navigator.push(
                             context,
@@ -115,7 +131,9 @@ class _SearchPageState extends State<SearchPage> {
                                           movie['vote_average'].toString(),
                                       movieReleaseDate: movie['release_date'],
                                       movieOverview: movie['overview'],
-                                      trailers: trailer!=null?[trailer]:[],
+                                      trailers:
+                                          trailer != null ? [trailer] : [],
+                                      cast: cast != null ? cast : [],
                                     )));
                       },
                       child: Container(
@@ -132,26 +150,36 @@ class _SearchPageState extends State<SearchPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       TextFont(
-                                        text: movie['title']!=null?movie['title']:'Processing...',
+                                        text: movie['title'] != null
+                                            ? movie['title']
+                                            : 'Processing...',
                                         size: 20,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       TextFont(
-                                          text: movie['release_date']!=null?movie['release_date']:'Processing...', size: 16),
+                                          text: movie['release_date'] != null
+                                              ? movie['release_date']
+                                              : 'Processing...',
+                                          size: 16),
                                       Row(
                                         children: [
                                           Icon(
                                             Icons.star,
-                                            color:
-                                                Color.fromARGB(255, 206, 186, 5),
+                                            color: Color.fromARGB(
+                                                255, 206, 186, 5),
                                             size: 14,
                                           ),
                                           TextFont(
                                               text: movie['vote_average']
-                                                  .toString()!=null?movie['vote_average'].toString():'Processing...',
+                                                          .toString() !=
+                                                      null
+                                                  ? movie['vote_average']
+                                                      .toString()
+                                                  : 'Processing...',
                                               size: 14),
                                         ],
                                       ),

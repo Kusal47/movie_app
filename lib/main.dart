@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'FontStyle/text_style.dart';
 import 'Screen Pages/search_page.dart';
 import 'Screen Pages/top_rated_movies.dart';
@@ -59,14 +61,14 @@ class SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                Icons.movie_rounded,
-                size: 100,
-                color: Colors.black,
+              Container(
+                height: 100,
+                width: 90,
+                child: Image.asset('assets/Image/appIcon.png'),
               ),
               Flexible(
                 child: DefaultTextStyle(
-                    child: Text('123Movies'),
+                    child: Text('Netflix'),
                     style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
@@ -76,10 +78,10 @@ class SplashScreenState extends State<SplashScreen> {
                 height: 20,
               ),
               Container(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: EdgeInsets.only(left: 40, right: 40),
                 child: LinearProgressIndicator(
                   backgroundColor: Colors.black,
-                  minHeight: 7,
+                  minHeight: 5,
                 ),
               )
             ],
@@ -144,7 +146,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: TextFont(text: '123Movies'),
+        title: TextFont(text: 'Netflix'),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -153,7 +155,9 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SearchPage(),
+                    builder: (context) => SearchPage(
+                      apiKey: apiKey,
+                    ),
                   ),
                 );
               },
@@ -172,15 +176,19 @@ class _HomePageState extends State<HomePage> {
           //passing the list of movies to the TrendingMovies.dart and so on.
           TrendingMovies(
             trending: trendingMovies,
+            apiKey: apiKey,
           ),
           UpcomingMovies(
             upcoming: upcomingMovies,
+            apiKey: apiKey,
           ),
           TopRatedMovies(
             toprated: topRatedMovies,
+            apiKey: apiKey,
           ),
           TvShows(
             tvshows: tvShows,
+            apiKey: apiKey,
           ),
         ],
       ),
