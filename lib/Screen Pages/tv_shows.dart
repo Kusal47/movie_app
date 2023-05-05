@@ -10,7 +10,8 @@ class TvShows extends StatelessWidget {
   //adding the constructor to receive the list of movies
   const TvShows({
     super.key,
-    required this.tvshows, required this.apiKey,
+    required this.tvshows,
+    required this.apiKey,
   });
 
   //receive the list of movies from the main.dart
@@ -30,8 +31,7 @@ class TvShows extends StatelessWidget {
     final response = await http.get(Uri.parse(
         'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
     final data = jsonDecode(response.body);
-        return data['cast'];
-
+    return data['cast'];
   }
 
   @override
@@ -54,7 +54,7 @@ class TvShows extends StatelessWidget {
                 return InkWell(
                     onTap: () async {
                       final trailer = await fetchTrailer(tvshows[index]['id']);
-                                            final cast = await getMovieCast(tvshows[index]['id']);
+                      final cast = await getMovieCast(tvshows[index]['id']);
 
                       Navigator.push(
                           context,
@@ -73,13 +73,11 @@ class TvShows extends StatelessWidget {
                                         ['release_date'],
                                     movieOverview: tvshows[index]['overview'],
                                     trailers: trailer != null ? [trailer] : [],
-                                                                        cast: cast != null ? cast : [],
-
+                                    cast: cast != null ? cast : [],
                                   )));
                     },
                     child: Container(
-                                              padding: EdgeInsets.only(right:5),
-
+                        padding: EdgeInsets.only(right: 5),
                         width: 140,
                         child: Column(
                           children: [
@@ -90,8 +88,10 @@ class TvShows extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            tvshows[index]['poster_path']),
+                                      tvshows[index]['poster_path'] != null
+                                          ? 'https://image.tmdb.org/t/p/w500${tvshows[index]['poster_path']}'
+                                          : 'https://via.placeholder.com/92x138.png?text=No+Poster+Available',
+                                    ),
                                   ),
                                 ),
                               ),

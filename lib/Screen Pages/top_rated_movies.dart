@@ -7,11 +7,15 @@ import '../details.dart';
 
 class TopRatedMovies extends StatelessWidget {
   //adding the constructor to receive the list of movies
-  const TopRatedMovies({super.key, required this.toprated, required this.apiKey,});
+  const TopRatedMovies({
+    super.key,
+    required this.toprated,
+    required this.apiKey,
+  });
 
   //receive the list of movies from the main.dart
   final List toprated;
- final String apiKey;
+  final String apiKey;
   Future<List<dynamic>> getMovieCast(int movieId) async {
     final url =
         'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=$apiKey';
@@ -26,8 +30,7 @@ class TopRatedMovies extends StatelessWidget {
     final response = await http.get(Uri.parse(
         'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
     final data = jsonDecode(response.body);
-        return data['cast'];
-
+    return data['cast'];
   }
 
   @override
@@ -48,62 +51,61 @@ class TopRatedMovies extends StatelessWidget {
                   decelerationRate: ScrollDecelerationRate.normal),
               itemBuilder: ((context, index) {
                 return InkWell(
-                  onTap: () async {
-                    final trailer = await fetchTrailer(toprated[index]['id']);
-                                          final cast = await getMovieCast(toprated[index]['id']);
+                    onTap: () async {
+                      final trailer = await fetchTrailer(toprated[index]['id']);
+                      final cast = await getMovieCast(toprated[index]['id']);
 
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                                  movienName: toprated[index]['title'],
-                                  posterImage:
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          toprated[index]['poster_path'],
-                                  movieImage:
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          toprated[index]['backdrop_path'],
-                                  movieRating: toprated[index]['vote_average']
-                                      .toString(),
-                                  movieReleaseDate: toprated[index]
-                                      ['release_date'],
-                                  movieOverview: toprated[index]['overview'],
-                                  trailers: trailer != null ? [trailer] : [],
-                                                                      cast: cast != null ? cast : [],
-
-                                )));
-                  },
-                  child: Container(
-                                            padding: EdgeInsets.only(right:5),
-
-                      width: 140,
-                      child: Column(
-                        children: [
-                         Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Container(
-                              height: 250,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          toprated[index]['poster_path']),
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailPage(
+                                    movienName: toprated[index]['title'],
+                                    posterImage:
+                                        'https://image.tmdb.org/t/p/w500/' +
+                                            toprated[index]['poster_path'],
+                                    movieImage:
+                                        'https://image.tmdb.org/t/p/w500/' +
+                                            toprated[index]['backdrop_path'],
+                                    movieRating: toprated[index]['vote_average']
+                                        .toString(),
+                                    movieReleaseDate: toprated[index]
+                                        ['release_date'],
+                                    movieOverview: toprated[index]['overview'],
+                                    trailers: trailer != null ? [trailer] : [],
+                                    cast: cast != null ? cast : [],
+                                  )));
+                    },
+                    child: Container(
+                        padding: EdgeInsets.only(right: 5),
+                        width: 140,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Container(
+                                height: 250,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      toprated[index]['poster_path'] != null
+                                          ? 'https://image.tmdb.org/t/p/w500${toprated[index]['poster_path']}'
+                                          : 'https://via.placeholder.com/92x138.png?text=No+Poster+Available',
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            child: TextFont(
-                              text: toprated[index]['title'] != null
-                                  ? toprated[index]['title']
-                                  : 'Processing...',
-                              size: 16,
-                              overflow: TextOverflow.ellipsis,
+                            Container(
+                              child: TextFont(
+                                text: toprated[index]['title'] != null
+                                    ? toprated[index]['title']
+                                    : 'Processing...',
+                                size: 16,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
-                      ))
-                );
+                          ],
+                        )));
               }),
               itemCount: toprated.length,
               scrollDirection: Axis.horizontal,

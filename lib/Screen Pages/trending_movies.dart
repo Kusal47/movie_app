@@ -25,8 +25,7 @@ class TrendingMovies extends StatelessWidget {
     final response = await http.get(Uri.parse(
         'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
     final data = jsonDecode(response.body);
-        return data['cast'];
-
+    return data['cast'];
   }
 
   @override
@@ -82,8 +81,10 @@ class TrendingMovies extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            trending[index]['poster_path']),
+                                      trending[index]['poster_path'] != null
+                                          ? 'https://image.tmdb.org/t/p/w500${trending[index]['poster_path']}'
+                                          : 'https://via.placeholder.com/92x138.png?text=No+Poster+Available',
+                                    ),
                                   ),
                                 ),
                               ),

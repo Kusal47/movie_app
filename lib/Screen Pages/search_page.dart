@@ -55,6 +55,7 @@ class _SearchPageState extends State<SearchPage> {
   Future<String?> fetchTrailer(int movieId) async {
     await http.get(Uri.parse(
         'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=${widget.apiKey}&language=en-US'));
+    return null;
   }
 
   final controller = TextEditingController();
@@ -142,7 +143,9 @@ class _SearchPageState extends State<SearchPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Image.network(
-                                'https://image.tmdb.org/t/p/w92${movie['poster_path']}',
+                                movie['poster_path'] != null
+                                    ? 'https://image.tmdb.org/t/p/w92${movie['poster_path']}'
+                                    : 'https://via.placeholder.com/92x138.png?text=No+Poster+Available',
                                 width: 80,
                                 height: 120,
                               ),
