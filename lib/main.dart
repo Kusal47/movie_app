@@ -1,7 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import 'FontStyle/text_style.dart';
 import 'Screen Pages/search_page.dart';
 import 'Screen Pages/top_rated_movies.dart';
@@ -31,6 +30,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   SplashScreenState createState() => SplashScreenState();
 }

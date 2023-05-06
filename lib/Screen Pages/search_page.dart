@@ -1,15 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:movieapp/FontStyle/text_style.dart';
 
 import '../details.dart';
 
 class SearchPage extends StatefulWidget {
-  final String apiKey;
-
   SearchPage({required this.apiKey});
+  final String apiKey;
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -36,6 +35,10 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         _searchResults = results['results'];
       });
+    }).catchError((error) {
+      setState(() {
+        _searchResults = [];
+      });
     });
   }
 
@@ -53,8 +56,14 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<String?> fetchTrailer(int movieId) async {
-    await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=${widget.apiKey}&language=en-US'));
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['results'].isNotEmpty) {
+        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
+      }
+    }
     return null;
   }
 
@@ -71,135 +80,175 @@ class _SearchPageState extends State<SearchPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    hintText: 'Search movies...',
-                    prefixIcon: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    suffixIcon: IconButton(
-                      focusColor: Colors.green,
-                      mouseCursor: MouseCursor.defer,
-                      icon: Icon(Icons.clear),
-                      onPressed: () {
-                        controller.clear();
-                        setState(() {
-                          _searchResults = [];
-                        });
-                      },
-                    ),
+                controller: controller,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  onChanged: (value) {
-                    _updateSearchResults(value);
-                  }),
+                  hintText: 'Search movies...',
+                  prefixIcon: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  suffixIcon: IconButton(
+                    focusColor: Colors.green,
+                    mouseCursor: MouseCursor.defer,
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      controller.clear();
+
+                      _searchResults = [];
+                    },
+                  ),
+                ),
+                onChanged: (value) {
+                  _updateSearchResults(value);
+                },
+              ),
             ),
             Flexible(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: height / 1.15,
-                child: ListView.builder(
-                  physics: BouncingScrollPhysics(
-                      decelerationRate: ScrollDecelerationRate.normal),
-                  itemCount: _searchResults.length,
-                  itemBuilder: (context, index) {
-                    final movie = _searchResults[index];
+                child: _searchResults.isEmpty && controller.text.isNotEmpty
+                    ? Center(child: Text('No results found'))
+                    : ListView.builder(
+                        physics: BouncingScrollPhysics(
+                            decelerationRate: ScrollDecelerationRate.normal),
+                        itemCount: _searchResults.length,
+                        itemBuilder: (context, index) {
+                          final movie = _searchResults[index];
 
-                    return InkWell(
-                      onTap: () async {
-                        final trailer =
-                            await fetchTrailer(_searchResults[index]['id']);
-                        final cast =
-                            await getMovieCast(_searchResults[index]['id']);
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DetailPage(
-                                      movienName: movie['title'],
-                                      posterImage:
-                                          'https://image.tmdb.org/t/p/w500/' +
-                                              movie['poster_path'],
-                                      movieImage:
-                                          'https://image.tmdb.org/t/p/w500/' +
-                                              movie['backdrop_path'],
-                                      movieRating:
-                                          movie['vote_average'].toString(),
-                                      movieReleaseDate: movie['release_date'],
-                                      movieOverview: movie['overview'],
-                                      trailers:
-                                          trailer != null ? [trailer] : [],
-                                      cast: cast != null ? cast : [],
-                                    )));
-                      },
-                      child: Container(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.network(
-                                movie['poster_path'] != null
-                                    ? 'https://image.tmdb.org/t/p/w92${movie['poster_path']}'
-                                    : 'https://via.placeholder.com/92x138.png?text=No+Poster+Available',
-                                width: 80,
-                                height: 120,
-                              ),
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      TextFont(
-                                        text: movie['title'] != null
-                                            ? movie['title']
-                                            : 'Processing...',
-                                        size: 20,
-                                        overflow: TextOverflow.ellipsis,
+                          return InkWell(
+                            onTap: () async {
+                              final trailer = await fetchTrailer(
+                                  _searchResults[index]['id']);
+                              final cast = await getMovieCast(
+                                  _searchResults[index]['id']);
+                              if (movie['poster_path'] != null &&
+                                  movie['title'] != null &&
+                                  movie['release_date'] != null &&
+                                  movie['vote_average'] != null &&
+                                  movie['overview'] != null) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DetailPage(
+                                              movienName: movie['title'],
+                                              posterImage:
+                                                  'https://image.tmdb.org/t/p/w500/' +
+                                                      movie['poster_path'],
+                                              movieImage:
+                                                  'https://image.tmdb.org/t/p/w500/' +
+                                                      movie['backdrop_path'],
+                                              movieRating: movie['vote_average']
+                                                  .toString(),
+                                              movieReleaseDate:
+                                                  movie['release_date'],
+                                              movieOverview: movie['overview'],
+                                              trailers: trailer != null
+                                                  ? [trailer]
+                                                  : [],
+                                              cast: cast != null ? cast : [],
+                                            )));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: TextFont(
+                                        text: 'No data found',
+                                        size: 14,
                                       ),
-                                      TextFont(
-                                          text: movie['release_date'] != null
-                                              ? movie['release_date']
-                                              : 'Processing...',
-                                          size: 16),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            color: Color.fromARGB(
-                                                255, 206, 186, 5),
-                                            size: 14,
-                                          ),
-                                          TextFont(
-                                              text: movie['vote_average']
-                                                          .toString() !=
-                                                      null
-                                                  ? movie['vote_average']
-                                                      .toString()
-                                                  : 'Processing...',
-                                              size: 14),
-                                        ],
-                                      ),
-                                      TextFont(
-                                        text: movie['overview'],
-                                        overflow: TextOverflow.ellipsis,
-                                        size: 16,
-                                      )
-                                    ],
+                                    ),
+                                    backgroundColor: Colors.white,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    elevation: 10,
+                                    margin: EdgeInsets.only(
+                                        bottom: 672, left: 10, right: 10),
+                                    padding: EdgeInsets.all(7),
+                                    duration: Duration(seconds: 10),
+                                    action: SnackBarAction(
+                                      label: 'OK',
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          )),
-                    );
-                  },
-                ),
+                                );
+                              }
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.network(
+                                      movie['poster_path'] != null
+                                          ? 'https://image.tmdb.org/t/p/w500/' +
+                                              movie['poster_path']
+                                          : 'https://via.placeholder.com/85x120?text=Image+not+found',
+                                      width: 100,
+                                      height: 120,
+                                    ),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            TextFont(
+                                              text: movie['title'] != null
+                                                  ? movie['title']
+                                                  : 'Processing...',
+                                              size: 20,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            TextFont(
+                                                text: movie['release_date'] !=
+                                                        null
+                                                    ? movie['release_date']
+                                                    : 'Processing...',
+                                                size: 16),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.star,
+                                                  color: Color.fromARGB(
+                                                      255, 206, 186, 5),
+                                                  size: 14,
+                                                ),
+                                                TextFont(
+                                                    text: movie['vote_average']
+                                                                .toString() !=
+                                                            null
+                                                        ? movie['vote_average']
+                                                            .toString()
+                                                        : 'Processing...',
+                                                    size: 14),
+                                              ],
+                                            ),
+                                            TextFont(
+                                              text: movie['overview'],
+                                              overflow: TextOverflow.ellipsis,
+                                              size: 16,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          );
+                        },
+                      ),
               ),
             ),
           ],

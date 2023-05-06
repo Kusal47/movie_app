@@ -38,7 +38,7 @@ dependencies:
   google_fonts: 
   tmdb_api:
   http:
-  get:
+  get: ^4.3.8
   url_launcher: 6.1.10
   youtube_player_flutter: 
   carousel_slider: ^4.2.1

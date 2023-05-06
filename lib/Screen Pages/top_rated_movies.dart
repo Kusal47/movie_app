@@ -23,14 +23,19 @@ class TopRatedMovies extends StatelessWidget {
     final response = await http.get(Uri.parse(url));
     final data = jsonDecode(response.body);
 
-    return data['cast'];
+    return data['results'];
   }
 
   Future<String?> fetchTrailer(int movieId) async {
     final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
-    final data = jsonDecode(response.body);
-    return data['cast'];
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['results'].isNotEmpty) {
+        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
+      }
+    }
+    return null;
   }
 
   @override
@@ -86,12 +91,12 @@ class TopRatedMovies extends StatelessWidget {
                                 height: 250,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: NetworkImage(
-                                      toprated[index]['poster_path'] != null
-                                          ? 'https://image.tmdb.org/t/p/w500${toprated[index]['poster_path']}'
-                                          : 'https://via.placeholder.com/92x138.png?text=No+Poster+Available',
-                                    ),
-                                  ),
+                                      image: NetworkImage(
+                                    toprated[index]['poster_path'] != null
+                                        ? 'https://image.tmdb.org/t/p/w500/' +
+                                            toprated[index]['poster_path']
+                                        : 'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',
+                                  )),
                                 ),
                               ),
                             ),
