@@ -10,25 +10,29 @@ class TvShows extends StatelessWidget {
   //adding the constructor to receive the list of movies
   const TvShows({
     super.key,
-    required this.tvshows, required this.apiKey,
+    required this.tvshows,
+    required this.apiKey,
   });
 
-  //receive the list of movies from the main.dart
+  //receive the list of tvshows from the main.dart
   final List tvshows;
   final String apiKey;
   Future<List<dynamic>> getMovieCast(int movieId) async {
     final url =
-        'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=$apiKey';
+        'https://api.themoviedb.org/3/tv/$movieId/credits?api_key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     final data = jsonDecode(response.body);
-
-    return data['results'];
+ if (response.statusCode == 200) {
+      return data['cast'];
+    } else {
+      return [data];
+    }
   }
 
-   Future<String?> fetchTrailer(int movieId) async {
+  Future<String?> fetchTrailer(int movieId) async {
     final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['results'].isNotEmpty) {
@@ -58,32 +62,55 @@ class TvShows extends StatelessWidget {
                 return InkWell(
                     onTap: () async {
                       final trailer = await fetchTrailer(tvshows[index]['id']);
-                                            final cast = await getMovieCast(tvshows[index]['id']);
+                      final cast = await getMovieCast(tvshows[index]['id']);
 
+                      // if (tvshows[index]['original_name'] != null &&
+                      //     tvshows[index]['backdrop_path'] != null &&
+                      //     tvshows[index]['vote_average'] != null &&
+                      //     tvshows[index]['first_air_date'] != null &&
+                      //     tvshows[index]['overview'] != null) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailPage(
-                                    movienName: tvshows[index]['original_name'],
-                                    posterImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            tvshows[index]['poster_path'],
-                                    movieImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            tvshows[index]['backdrop_path'],
-                                    movieRating: tvshows[index]['vote_average']
-                                        .toString(),
-                                    movieReleaseDate: tvshows[index]
-                                        ['release_date'],
-                                    movieOverview: tvshows[index]['overview'],
-                                    trailers: trailer != null ? [trailer] : [],
-                                                                        cast: cast != null ? cast : [],
-
-                                  )));
+                                  movienName:
+                                      tvshows[index]['original_name'] != null
+                                          ? tvshows[index]['original_name']
+                                          : tvshows[index]['name'],
+                                  posterImage:
+                                      'https://image.tmdb.org/t/p/w500/' +
+                                          tvshows[index]['poster_path'],
+                                  movieImage:
+                                      'https://image.tmdb.org/t/p/w500/' +
+                                          tvshows[index]['backdrop_path'],
+                                  movieRating:
+                                      tvshows[index]['vote_average'].toString(),
+                                  movieReleaseDate: tvshows[index]
+                                      ['first_air_date'],
+                                  movieOverview: tvshows[index]['overview'],
+                                  trailers: trailer != null ? [trailer] : [],
+                                  cast: cast)));
+                      // } else {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(
+                      //       content: Text(
+                      //         'Sorry, this Tvshow is unavailable',
+                      //         textAlign: TextAlign.center,
+                      //         style: TextStyle(
+                      //             fontSize: 14,
+                      //             fontWeight: FontWeight.bold,
+                      //             fontFamily: 'serif'),
+                      //       ),
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(15),
+                      //       ),
+                      //       padding: EdgeInsets.all(30),
+                      //     ),
+                      //   );
+                      // }
                     },
                     child: Container(
-                                              padding: EdgeInsets.only(right:5),
-
+                        padding: EdgeInsets.only(right: 5),
                         width: 140,
                         child: Column(
                           children: [
@@ -93,11 +120,12 @@ class TvShows extends StatelessWidget {
                                 height: 250,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: NetworkImage(
-                                               tvshows[index]['poster_path']!=null?'https://image.tmdb.org/t/p/w500/' +
-                                          tvshows[index]['poster_path']:'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',)
-                               
-                                  ),
+                                      image: NetworkImage(
+                                    tvshows[index]['poster_path'] != null
+                                        ? 'https://image.tmdb.org/t/p/w500/' +
+                                            tvshows[index]['poster_path']
+                                        : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                                  )),
                                 ),
                               ),
                             ),
@@ -105,7 +133,7 @@ class TvShows extends StatelessWidget {
                               child: TextFont(
                                 text: tvshows[index]['original_name'] != null
                                     ? tvshows[index]['original_name']
-                                    : 'Processing...',
+                                    : tvshows[index]['name'],
                                 size: 16,
                                 overflow: TextOverflow.ellipsis,
                               ),

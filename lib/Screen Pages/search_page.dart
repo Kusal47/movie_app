@@ -77,8 +77,10 @@ class _SearchPageState extends State<SearchPage> {
         resizeToAvoidBottomInset: false,
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
+            Container(
+              width: MediaQuery.of(context).size.width / 0.8,
+              padding: EdgeInsets.only(left: 5, right: 5),
+              height: height / 10,
               child: TextField(
                 controller: controller,
                 decoration: InputDecoration(
@@ -113,7 +115,9 @@ class _SearchPageState extends State<SearchPage> {
                 width: MediaQuery.of(context).size.width,
                 height: height / 1.15,
                 child: _searchResults.isEmpty && controller.text.isNotEmpty
-                    ? Center(child: Text('No results found'))
+                    ? Center(
+                        child: TextFont(
+                            text: ' Searched result not found', size: 14))
                     : ListView.builder(
                         physics: BouncingScrollPhysics(
                             decelerationRate: ScrollDecelerationRate.normal),
@@ -127,10 +131,11 @@ class _SearchPageState extends State<SearchPage> {
                                   _searchResults[index]['id']);
                               final cast = await getMovieCast(
                                   _searchResults[index]['id']);
-                              if (movie['poster_path'] != null &&
-                                  movie['title'] != null &&
-                                  movie['release_date'] != null &&
-                                  movie['vote_average'] != null &&
+                              if (movie['poster_path'] != null ||
+                                  movie['backdrop_path'] != null ||
+                                  movie['original_name'] != null ||
+                                  movie['release_date'] != null ||
+                                  movie['vote_average'] != null ||
                                   movie['overview'] != null) {
                                 Navigator.push(
                                     context,
@@ -151,7 +156,7 @@ class _SearchPageState extends State<SearchPage> {
                                               trailers: trailer != null
                                                   ? [trailer]
                                                   : [],
-                                              cast: cast != null ? cast : [],
+                                              cast:cast,
                                             )));
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -163,15 +168,14 @@ class _SearchPageState extends State<SearchPage> {
                                         size: 14,
                                       ),
                                     ),
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.1,
                                     backgroundColor: Colors.white,
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                     elevation: 10,
-                                    margin: EdgeInsets.only(
-                                        bottom: 672, left: 10, right: 10),
-                                    padding: EdgeInsets.all(7),
                                     duration: Duration(seconds: 10),
                                     action: SnackBarAction(
                                       label: 'OK',
@@ -193,7 +197,7 @@ class _SearchPageState extends State<SearchPage> {
                                       movie['poster_path'] != null
                                           ? 'https://image.tmdb.org/t/p/w500/' +
                                               movie['poster_path']
-                                          : 'https://via.placeholder.com/85x120?text=Image+not+found',
+                                          : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
                                       width: 100,
                                       height: 120,
                                     ),
@@ -207,7 +211,7 @@ class _SearchPageState extends State<SearchPage> {
                                             TextFont(
                                               text: movie['title'] != null
                                                   ? movie['title']
-                                                  : 'Processing...',
+                                                  : movie['original_name'],
                                               size: 20,
                                               overflow: TextOverflow.ellipsis,
                                             ),

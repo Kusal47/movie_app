@@ -17,13 +17,16 @@ class TrendingMovies extends StatelessWidget {
 
     final response = await http.get(Uri.parse(url));
     final data = jsonDecode(response.body);
-
-    return data['cast'];
+    if (response.statusCode == 200) {
+      return data['cast'];
+    } else {
+      return [data];
+    }
   }
 
   Future<String?> fetchTrailer(int movieId) async {
     final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['results'].isNotEmpty) {
@@ -58,21 +61,24 @@ class TrendingMovies extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailPage(
-                                    movienName: trending[index]['title'],
-                                    posterImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            trending[index]['poster_path'],
-                                    movieImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            trending[index]['backdrop_path'],
-                                    movieRating: trending[index]['vote_average']
-                                        .toString(),
-                                    movieReleaseDate: trending[index]
-                                        ['release_date'],
-                                    movieOverview: trending[index]['overview'],
-                                    trailers: trailer != null ? [trailer] : [],
-                                    cast: cast != null ? cast : [],
-                                  )));
+                                  movienName: trending[index]['title'] != null
+                                      ? trending[index]['title']
+                                      : trending[index]['name'],
+                                  posterImage:
+                                      'https://image.tmdb.org/t/p/w500/' +
+                                          trending[index]['poster_path'],
+                                  movieImage:
+                                      'https://image.tmdb.org/t/p/w500/' +
+                                          trending[index]['backdrop_path'],
+                                  movieRating: trending[index]['vote_average']
+                                      .toString(),
+                                  movieReleaseDate:
+                                      trending[index]['release_date'] != null
+                                          ? trending[index]['release_date']
+                                          : trending[index]['first_air_date'],
+                                  movieOverview: trending[index]['overview'],
+                                  trailers: trailer != null ? [trailer] : [],
+                                  cast: cast)));
                     },
                     child: Container(
                         padding: EdgeInsets.only(right: 5),
@@ -85,11 +91,12 @@ class TrendingMovies extends StatelessWidget {
                                 height: 250,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: NetworkImage(
-                                              trending[index]['poster_path']!=null?'https://image.tmdb.org/t/p/w500/' +
-                                          trending[index]['poster_path']:'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',)
-                               
-                                  ),
+                                      image: NetworkImage(
+                                    trending[index]['poster_path'] != null
+                                        ? 'https://image.tmdb.org/t/p/w500/' +
+                                            trending[index]['poster_path']
+                                        : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                                  )),
                                 ),
                               ),
                             ),
@@ -97,7 +104,7 @@ class TrendingMovies extends StatelessWidget {
                               child: TextFont(
                                 text: trending[index]['title'] != null
                                     ? trending[index]['title']
-                                    : 'Processing...',
+                                    : trending[index]['name'],
                                 size: 16,
                                 overflow: TextOverflow.ellipsis,
                               ),

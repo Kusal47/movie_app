@@ -78,7 +78,7 @@ class SplashScreenState extends State<SplashScreen> {
                 height: 20,
               ),
               Container(
-                padding: EdgeInsets.only(left: 40, right: 40),
+                width: MediaQuery.of(context).size.width / 2,
                 child: LinearProgressIndicator(
                   backgroundColor: Colors.black,
                   minHeight: 5,
@@ -130,6 +130,8 @@ class _HomePageState extends State<HomePage> {
     Map topRatedMovieResult = await tmdbWithCustomLogs.v3.movies.getTopRated();
     Map upcomingMovieResult = await tmdbWithCustomLogs.v3.movies.getUpcoming();
     Map tvShowResult = await tmdbWithCustomLogs.v3.tv.getPopular();
+    // print(trendingMovieResult['results'][2]);
+    //     print(trendingMovieResult['results'][5]);
 
     //updating the state of the app
     setState(() {
@@ -143,54 +145,56 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: TextFont(text: 'Netflix'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchPage(
-                      apiKey: apiKey,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          title: TextFont(text: 'Netflix'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchPage(
+                        apiKey: apiKey,
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: Icon(
-                Icons.search,
-                size: 30,
+                  );
+                },
+                child: Icon(
+                  Icons.search,
+                  size: 30,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: ListView(
-        physics: BouncingScrollPhysics(
-            decelerationRate: ScrollDecelerationRate.normal),
-        children: [
-          //passing the list of movies to the TrendingMovies.dart and so on.
-          TrendingMovies(
-            trending: trendingMovies,
-            apiKey: apiKey,
-          ),
-          UpcomingMovies(
-            upcoming: upcomingMovies,
-            apiKey: apiKey,
-          ),
-          TopRatedMovies(
-            toprated: topRatedMovies,
-            apiKey: apiKey,
-          ),
-          TvShows(
-            tvshows: tvShows,
-            apiKey: apiKey,
-          ),
-        ],
+          ],
+        ),
+        body: ListView(
+          physics: BouncingScrollPhysics(
+              decelerationRate: ScrollDecelerationRate.normal),
+          children: [
+            //passing the list of movies to the TrendingMovies.dart and so on.
+            TrendingMovies(
+              trending: trendingMovies,
+              apiKey: apiKey,
+            ),
+            UpcomingMovies(
+              upcoming: upcomingMovies,
+              apiKey: apiKey,
+            ),
+            TopRatedMovies(
+              toprated: topRatedMovies,
+              apiKey: apiKey,
+            ),
+            TvShows(
+              tvshows: tvShows,
+              apiKey: apiKey,
+            ),
+          ],
+        ),
       ),
     );
   }

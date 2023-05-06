@@ -118,9 +118,9 @@ class DetailPage extends StatelessWidget {
                     width: 150,
                     padding: EdgeInsets.all(10),
                     child: Image.network(
-                      posterImage!=null? posterImage!: 
-                      'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg'
-                      ,
+                      posterImage != null
+                          ? posterImage!
+                          : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
                       fit: BoxFit.cover,
                     )),
                 Expanded(
@@ -198,42 +198,57 @@ class DetailPage extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: cast!.length,
                     itemBuilder: ((context, index) {
-                      return cast![index]['profile_path']!=null? Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                              padding: EdgeInsets.only(left: 15, top: 10),
-                              height: 90,
-                              width: 90,
-                              child: Image.network(
-                                'https://image.tmdb.org/t/p/w500/' +
-                                    cast![index]['profile_path'],
-                                fit: BoxFit.cover,
-                              )),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      return cast![index]['profile_path'] != null ||
+                              cast![index]['name'] != null ||
+                              cast![index]['character'] != null
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                TextFont(
-                                  text: cast![index]['name'] != null
-                                      ? cast![index]['name']
-                                      : 'Loading...',
+                                Container(
+                                    padding: EdgeInsets.only(left: 15, top: 10),
+                                    height: 90,
+                                    width: 90,
+                                    child: Image.network(
+                                      cast![index]['profile_path'] != null
+                                          ? 'https://image.tmdb.org/t/p/w500/' +
+                                              cast![index]['profile_path']
+                                          : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                                      fit: BoxFit.cover,
+                                    )),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFont(
+                                        text: cast![index]['name'] != null
+                                            ? cast![index]['name']
+                                            : 'Loading...',
+                                        size: 14,
+                                      ),
+                                      TextFont(
+                                        text: cast![index]['character'] != null
+                                            ? cast![index]['character']
+                                            : 'Loading...',
+                                        size: 12,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            )
+                          : Padding(
+                              padding: EdgeInsets.only(top: 30.0),
+                              child: Center(
+                                child: TextFont(
+                                  text: 'Cast Unavailable',
                                   size: 14,
                                 ),
-                                TextFont(
-                                  text: cast![index]['character']!= null
-                                      ? cast![index]['character']
-                                      : 'Loading...',
-                                  size: 12,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ):Container();
+                              ),
+                            );
                     }),
                   ),
                 ),

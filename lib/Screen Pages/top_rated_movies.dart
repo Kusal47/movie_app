@@ -22,13 +22,16 @@ class TopRatedMovies extends StatelessWidget {
 
     final response = await http.get(Uri.parse(url));
     final data = jsonDecode(response.body);
-
-    return data['results'];
+    if (response.statusCode == 200) {
+      return data['cast'];
+    } else {
+      return [data];
+    }
   }
 
   Future<String?> fetchTrailer(int movieId) async {
     final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['results'].isNotEmpty) {
@@ -64,21 +67,20 @@ class TopRatedMovies extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailPage(
-                                    movienName: toprated[index]['title'],
-                                    posterImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            toprated[index]['poster_path'],
-                                    movieImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            toprated[index]['backdrop_path'],
-                                    movieRating: toprated[index]['vote_average']
-                                        .toString(),
-                                    movieReleaseDate: toprated[index]
-                                        ['release_date'],
-                                    movieOverview: toprated[index]['overview'],
-                                    trailers: trailer != null ? [trailer] : [],
-                                    cast: cast != null ? cast : [],
-                                  )));
+                                  movienName: toprated[index]['title'],
+                                  posterImage:
+                                      'https://image.tmdb.org/t/p/w500/' +
+                                          toprated[index]['poster_path'],
+                                  movieImage:
+                                      'https://image.tmdb.org/t/p/w500/' +
+                                          toprated[index]['backdrop_path'],
+                                  movieRating: toprated[index]['vote_average']
+                                      .toString(),
+                                  movieReleaseDate: toprated[index]
+                                      ['release_date'],
+                                  movieOverview: toprated[index]['overview'],
+                                  trailers: trailer != null ? [trailer] : [],
+                                  cast: cast)));
                     },
                     child: Container(
                         padding: EdgeInsets.only(right: 5),
@@ -104,7 +106,7 @@ class TopRatedMovies extends StatelessWidget {
                               child: TextFont(
                                 text: toprated[index]['title'] != null
                                     ? toprated[index]['title']
-                                    : 'Processing...',
+                                    : toprated[index]['name'],
                                 size: 16,
                                 overflow: TextOverflow.ellipsis,
                               ),
