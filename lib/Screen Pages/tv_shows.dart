@@ -23,7 +23,7 @@ class TvShows extends StatelessWidget {
 
     final response = await http.get(Uri.parse(url));
     final data = jsonDecode(response.body);
- if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       return data['cast'];
     } else {
       return [data];
@@ -64,50 +64,52 @@ class TvShows extends StatelessWidget {
                       final trailer = await fetchTrailer(tvshows[index]['id']);
                       final cast = await getMovieCast(tvshows[index]['id']);
 
-                      // if (tvshows[index]['original_name'] != null &&
-                      //     tvshows[index]['backdrop_path'] != null &&
-                      //     tvshows[index]['vote_average'] != null &&
-                      //     tvshows[index]['first_air_date'] != null &&
-                      //     tvshows[index]['overview'] != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailPage(
-                                  movienName:
-                                      tvshows[index]['original_name'] != null
-                                          ? tvshows[index]['original_name']
-                                          : tvshows[index]['name'],
-                                  posterImage:
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          tvshows[index]['poster_path'],
-                                  movieImage:
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          tvshows[index]['backdrop_path'],
-                                  movieRating:
-                                      tvshows[index]['vote_average'].toString(),
-                                  movieReleaseDate: tvshows[index]
-                                      ['first_air_date'],
-                                  movieOverview: tvshows[index]['overview'],
-                                  trailers: trailer != null ? [trailer] : [],
-                                  cast: cast)));
-                      // } else {
-                      //   ScaffoldMessenger.of(context).showSnackBar(
-                      //     SnackBar(
-                      //       content: Text(
-                      //         'Sorry, this Tvshow is unavailable',
-                      //         textAlign: TextAlign.center,
-                      //         style: TextStyle(
-                      //             fontSize: 14,
-                      //             fontWeight: FontWeight.bold,
-                      //             fontFamily: 'serif'),
-                      //       ),
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(15),
-                      //       ),
-                      //       padding: EdgeInsets.all(30),
-                      //     ),
-                      //   );
-                      // }
+                      if (tvshows[index]['original_name'] != null &&
+                          tvshows[index]['backdrop_path'] != null &&
+                          tvshows[index]['vote_average'] != null &&
+                          tvshows[index]['first_air_date'] != null &&
+                          tvshows[index]['overview'] != null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailPage(
+                                    movienName:
+                                        tvshows[index]['original_name'] != null
+                                            ? tvshows[index]['original_name']
+                                            : tvshows[index]['name'],
+                                    posterImage:
+                                        'https://image.tmdb.org/t/p/w500/' +
+                                            tvshows[index]['poster_path'],
+                                    movieImage:
+                                        'https://image.tmdb.org/t/p/w500/' +
+                                            tvshows[index]['backdrop_path'],
+                                    movieRating: tvshows[index]['vote_average']
+                                        .toString(),
+                                    movieReleaseDate: tvshows[index]
+                                        ['first_air_date'],
+                                    movieOverview: tvshows[index]['overview'],
+                                    trailers: trailer != null ? [trailer] : [],
+                                    cast: cast)));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Sorry, this Tvshow is unavailable',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'serif'),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: EdgeInsets.all(40),
+                            duration: Duration(seconds: 3),
+                            backgroundColor: Colors.white,
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                         padding: EdgeInsets.only(right: 5),

@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:tmdb_api/tmdb_api.dart';
+
 import 'FontStyle/text_style.dart';
 import 'Screen Pages/search_page.dart';
 import 'Screen Pages/top_rated_movies.dart';
 import 'Screen Pages/trending_movies.dart';
 import 'Screen Pages/tv_shows.dart';
 import 'Screen Pages/upcoming_movies.dart';
-import 'package:tmdb_api/tmdb_api.dart';
 
-void main() {
+
+void main() async {
+
   runApp(const MyApp());
 }
 

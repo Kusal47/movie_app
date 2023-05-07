@@ -79,7 +79,7 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             Container(
               width: MediaQuery.of(context).size.width / 0.8,
-              padding: EdgeInsets.only(left: 5, right: 5),
+              padding: EdgeInsets.only(left: 5, right: 5, top: 5),
               height: height / 10,
               child: TextField(
                 controller: controller,
@@ -131,11 +131,11 @@ class _SearchPageState extends State<SearchPage> {
                                   _searchResults[index]['id']);
                               final cast = await getMovieCast(
                                   _searchResults[index]['id']);
-                              if (movie['poster_path'] != null ||
-                                  movie['backdrop_path'] != null ||
-                                  movie['original_name'] != null ||
-                                  movie['release_date'] != null ||
-                                  movie['vote_average'] != null ||
+                              if (movie['poster_path'] != null &&
+                                  movie['backdrop_path'] != null &&
+                                  movie['original_name'] != null &&
+                                  movie['release_date'] != null &&
+                                  movie['vote_average'] != null &&
                                   movie['overview'] != null) {
                                 Navigator.push(
                                     context,
@@ -156,7 +156,7 @@ class _SearchPageState extends State<SearchPage> {
                                               trailers: trailer != null
                                                   ? [trailer]
                                                   : [],
-                                              cast:cast,
+                                              cast: cast,
                                             )));
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
