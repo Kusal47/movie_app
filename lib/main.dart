@@ -9,9 +9,7 @@ import 'Screen Pages/trending_movies.dart';
 import 'Screen Pages/tv_shows.dart';
 import 'Screen Pages/upcoming_movies.dart';
 
-
 void main() async {
-
   runApp(const MyApp());
 }
 

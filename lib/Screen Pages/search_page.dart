@@ -133,9 +133,9 @@ class _SearchPageState extends State<SearchPage> {
                                   _searchResults[index]['id']);
                               if (movie['poster_path'] != null &&
                                   movie['backdrop_path'] != null &&
-                                  movie['original_name'] != null &&
-                                  movie['release_date'] != null &&
-                                  movie['vote_average'] != null &&
+                                  // movie['original_name'] != null &&
+                                  // movie['release_date'] != null &&
+                                  // movie['vote_average'] != null &&
                                   movie['overview'] != null) {
                                 Navigator.push(
                                     context,
