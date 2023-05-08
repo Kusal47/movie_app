@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../ApiServices/services.dart';
 import '../FontStyle/text_style.dart';
 import '../details.dart';
 
@@ -17,30 +18,7 @@ class TvShows extends StatelessWidget {
   //receive the list of tvshows from the main.dart
   final List tvshows;
   final String apiKey;
-  Future<List<dynamic>> getMovieCast(int movieId) async {
-    final url =
-        'https://api.themoviedb.org/3/tv/$movieId/credits?api_key=$apiKey';
 
-    final response = await http.get(Uri.parse(url));
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      return data['cast'];
-    } else {
-      return [data];
-    }
-  }
-
-  Future<String?> fetchTrailer(int movieId) async {
-    final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['results'].isNotEmpty) {
-        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
-      }
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +39,10 @@ class TvShows extends StatelessWidget {
               itemBuilder: ((context, index) {
                 return InkWell(
                     onTap: () async {
-                      final trailer = await fetchTrailer(tvshows[index]['id']);
-                      final cast = await getMovieCast(tvshows[index]['id']);
+                   final trailer =
+                        await ApiService.fetchTrailer(apiKey, tvshows[index]['id']);
+                    final cast =
+                        await ApiService.getTvCast(apiKey, tvshows[index]['id']);
 
                       if (tvshows[index]['original_name'] != null &&
                           tvshows[index]['backdrop_path'] != null &&

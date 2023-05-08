@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../FontStyle/text_style.dart';
 import '../details.dart';
+import '../ApiServices/services.dart';
+
 
 class TrendingMovies extends StatelessWidget {
   //adding the constructor to receive the list of movies
@@ -11,30 +13,7 @@ class TrendingMovies extends StatelessWidget {
   //receive the list of movies from the main.dart
   final List trending;
   final String apiKey;
-  Future<List<dynamic>> getMovieCast(int movieId) async {
-    final url =
-        'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=$apiKey';
-
-    final response = await http.get(Uri.parse(url));
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      return data['cast'];
-    } else {
-      return [data];
-    }
-  }
-
-  Future<String?> fetchTrailer(int movieId) async {
-    final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['results'].isNotEmpty) {
-        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
-      }
-    }
-    return null;
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +34,8 @@ class TrendingMovies extends StatelessWidget {
               itemBuilder: ((context, index) {
                 return InkWell(
                     onTap: () async {
-                      final trailer = await fetchTrailer(trending[index]['id']);
-                      final cast = await getMovieCast(trending[index]['id']);
+                      final trailer = await ApiService.fetchTrailer(apiKey,trending[index]['id']);
+                      final cast = await ApiService.getMovieCast(apiKey,trending[index]['id']);
                       Navigator.push(
                           context,
                           MaterialPageRoute(

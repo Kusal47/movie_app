@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:movieapp/FontStyle/text_style.dart';
 
+import '../ApiServices/Searching.dart';
+import '../ApiServices/services.dart';
 import '../details.dart';
 
 class SearchPage extends StatefulWidget {
@@ -15,56 +17,24 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  List<dynamic> _searchResults = [];
-
-  Future<Map<String, dynamic>> _fetchSearchResults(String query) async {
-    final url = Uri.parse(
-        'https://api.themoviedb.org/3/search/movie?api_key=${widget.apiKey}&query=$query');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      return jsonResponse;
-    } else {
-      throw Exception('Failed to load search results');
-    }
+   late final SearchService _searchService; 
+    List<dynamic> _searchResults = [];
+    @override
+  void initState() {
+    super.initState();
+    _searchService = SearchService(apiKey: widget.apiKey);
   }
 
   void _updateSearchResults(String query) {
-    _fetchSearchResults(query).then((results) {
+    _searchService.fetchSearchResults(query).then((results) {
       setState(() {
-        _searchResults = results['results'];
+        _searchResults = results;
       });
     }).catchError((error) {
       setState(() {
         _searchResults = [];
       });
     });
-  }
-
-  Future<List<dynamic>> getMovieCast(int movieId) async {
-    final url =
-        'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=${widget.apiKey}';
-
-    final response = await http.get(Uri.parse(url));
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      return data['cast'];
-    } else {
-      throw Exception('Failed to load search results');
-    }
-  }
-
-  Future<String?> fetchTrailer(int movieId) async {
-    final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=3b3e044406dcc9dfd98161380ff671d0&language=en-US'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['results'].isNotEmpty) {
-        return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
-      }
-    }
-    return null;
   }
 
   final controller = TextEditingController();
@@ -95,8 +65,6 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   ),
                   suffixIcon: IconButton(
-                    focusColor: Colors.green,
-                    mouseCursor: MouseCursor.defer,
                     icon: Icon(Icons.clear),
                     onPressed: () {
                       controller.clear();
@@ -127,10 +95,10 @@ class _SearchPageState extends State<SearchPage> {
 
                           return InkWell(
                             onTap: () async {
-                              final trailer = await fetchTrailer(
-                                  _searchResults[index]['id']);
-                              final cast = await getMovieCast(
-                                  _searchResults[index]['id']);
+                              final trailer = await ApiService.fetchTrailer(
+                                  widget.apiKey, _searchResults[index]['id']);
+                              final cast = await ApiService.getMovieCast(
+                                  widget.apiKey, _searchResults[index]['id']);
                               if (movie['poster_path'] != null &&
                                   movie['backdrop_path'] != null &&
                                   // movie['original_name'] != null &&
