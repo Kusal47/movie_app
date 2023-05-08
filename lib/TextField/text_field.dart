@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextFields extends StatefulWidget {
+class TextFields extends StatelessWidget {
   const TextFields({
     super.key,
     required this.controller,
@@ -16,29 +16,22 @@ class TextFields extends StatefulWidget {
   final bool isEmail, isPhone;
 
   @override
-  State<TextFields> createState() => _TextFieldsState();
-}
-
-class _TextFieldsState extends State<TextFields> {
-  bool passVisible = true;
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
           TextFormField(
-            obscureText: widget.isPassword ? passVisible : false,
-            controller: widget.controller,
-            keyboardType: widget.isEmail
+            obscureText: isPassword ? true : false,
+            controller: controller,
+            keyboardType: isEmail
                 ? TextInputType.emailAddress
-                : widget.isPhone
+                : isPhone
                     ? TextInputType.phone
-                    : widget.isPassword
+                    : isPassword
                         ? TextInputType.visiblePassword
                         : TextInputType.text,
             validator: (value) {
-              if (widget.isEmail) {
+              if (isEmail) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your Email';
                 } else if (!RegExp(
@@ -48,7 +41,7 @@ class _TextFieldsState extends State<TextFields> {
                 }
                 return null;
               }
-              if (widget.isPassword) {
+              if (isPassword) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your Password';
                 } else if (value.length < 8) {
@@ -56,7 +49,7 @@ class _TextFieldsState extends State<TextFields> {
                 }
                 return null;
               }
-              if (widget.isPhone) {
+              if (isPhone) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your phone number';
                 }
@@ -70,23 +63,13 @@ class _TextFieldsState extends State<TextFields> {
               return null;
             },
             decoration: InputDecoration(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  passVisible ? Icons.visibility : Icons.visibility_off,
-                ),
-                onPressed: () {
-                  setState(() {
-                    passVisible = passVisible;
-                  });
-                },
-              ),
               border: OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
-              hintText: widget.hinttext,
+              hintText: hinttext,
             ),
           ),
           SizedBox(
