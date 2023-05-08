@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:tmdb_api/tmdb_api.dart';
 
 import '../FontStyle/text_style.dart';
+import '../Login Register/login_page.dart';
 import '../Movie Pages/search_page.dart';
 import '../Movie Pages/top_rated_movies.dart';
 import '../Movie Pages/trending_movies.dart';
 import '../Movie Pages/tv_shows.dart';
 import '../Movie Pages/upcoming_movies.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: TextFont(text: 'Netflix'),
           actions: [
             Padding(
@@ -90,6 +91,31 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            PopupMenuButton(itemBuilder: (context) {
+              return [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Text("My Account"),
+                ),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Text("Settings"),
+                ),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: Text("Logout"),
+                ),
+              ];
+            }, onSelected: (value) {
+              if (value == 0) {
+                print("My Account menu is selected.");
+              } else if (value == 1) {
+                print("Settings menu is selected.");
+              } else if (value == 2) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              }
+            }),
           ],
         ),
         body: ListView(
