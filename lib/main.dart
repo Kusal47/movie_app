@@ -7,7 +7,7 @@ import 'Home Page/home.dart';
 import 'Login Register/login_page.dart';
 import 'firebase_options.dart';
 
-void main()  async {
+void main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
@@ -29,6 +29,45 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// class HomeScreen extends StatefulWidget {
+//   HomeScreen({super.key});
+
+//   @override
+//   State<HomeScreen> createState() => _HomeScreenState();
+// }
+
+// class _HomeScreenState extends State<HomeScreen> {
+//   bool isHidden = false;
+//   TextEditingController emailC = TextEditingController();
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Padding(
+//         padding: const EdgeInsets.all(50.0),
+//         child: Container(
+//           child: TextField(
+//             controller: emailC,
+//             obscureText: isHidden ? false : true,
+//             decoration: InputDecoration(
+//               hintText: 'Enter your password',
+//               suffixIcon: IconButton(
+//                 onPressed: () {
+//                   setState(() {
+//                     isHidden = !isHidden;
+//                   });
+//                 },
+//                 icon: isHidden
+//                     ? Icon(Icons.visibility_off)
+//                     : Icon(Icons.visibility),
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -43,27 +82,23 @@ class SplashScreenState extends State<SplashScreen> {
     Timer(
         Duration(seconds: 3),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) =>  StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return HomePage();
-              } else {
-                return  LoginPage();
-              }
-            }))));
+            context,
+            MaterialPageRoute(
+                builder: (context) => StreamBuilder<User?>(
+                    stream: FirebaseAuth.instance.authStateChanges(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return HomePage();
+                      } else {
+                        return LoginPage();
+                      }
+                    }))));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepPurple, Colors.red],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.grey[100],
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -72,16 +107,20 @@ class SplashScreenState extends State<SplashScreen> {
               Container(
                 height: 100,
                 width: 90,
-                child: Image.asset('assets/Image/appIcon.png'),
+                child: Image.asset('assets/Image/Movie Icon.png'),
               ),
-              Flexible(
-                child: DefaultTextStyle(
-                    child: Text('Netflix'),
+              DefaultTextStyle(
+                  child: Text(
+                    'Cinemania',
                     style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white70)),
-              ),
+                        color: Colors.indigo),
+                  ),
+                  style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white70)),
               SizedBox(
                 height: 20,
               ),
@@ -97,5 +136,3 @@ class SplashScreenState extends State<SplashScreen> {
         ));
   }
 }
-
-

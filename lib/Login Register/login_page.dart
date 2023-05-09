@@ -20,13 +20,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[800],
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Login Page'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
+      body: SingleChildScrollView(
         child: Container(
+          padding: EdgeInsets.all(15),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Form(
@@ -40,6 +42,9 @@ class _LoginPageState extends State<LoginPage> {
                   hinttext: 'Email',
                   isEmail: true,
                   isPhone: false,
+                  isFname: false,
+                  isLname: false,
+                  
                 ),
                 TextFields(
                   controller: passController,
@@ -47,9 +52,12 @@ class _LoginPageState extends State<LoginPage> {
                   hinttext: 'Password',
                   isEmail: false,
                   isPhone: false,
+                  isFname: false,
+                  isLname: false,
                 ),
                 Buttons(
                     btnname: 'Login',
+                    size: 20,
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         await AuthService()
@@ -62,23 +70,41 @@ class _LoginPageState extends State<LoginPage> {
                       emailController.clear();
                       passController.clear();
                     }),
-                SizedBox(height: 30),
-                InkWell(
-                  child: Text(
-                    'Register Now',
-                    style: TextStyle(
-                        color: Colors.blue[900], fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegisterPage()));
-                  },
+                SizedBox(height: 20),
+               
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Don\'t have an account?',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                    ),
+                    SizedBox(width: 5),
+                    InkWell(
+                      child: Text(
+                        'Register Now',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue[200],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RegisterPage()));
+                      },
+                    ),
+                  ],
                 )
               ],
             ),
           ),
+       
         ),
       ),
     );

@@ -12,7 +12,7 @@ class Buttons extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
-      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -21,6 +21,7 @@ class Buttons extends StatelessWidget {
       child: Text(btnname!,
           style: TextStyle(
             fontSize: size,
+            color: Colors.white,
           )),
     );
   }

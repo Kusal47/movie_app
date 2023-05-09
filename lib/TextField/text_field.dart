@@ -1,100 +1,111 @@
 import 'package:flutter/material.dart';
 
-class TextFields extends StatelessWidget {
-  TextFields({
-    Key? key,
-    required this.controller,
-    required this.hinttext,
-    required this.isPassword,
-    required this.isEmail,
-    required this.isPhone,
-  }) : super(key: key);
+class TextFields extends StatefulWidget {
+  TextFields(
+      {Key? key,
+      required this.controller,
+      required this.hinttext,
+      required this.isEmail,
+      required this.isPhone,
+      required this.isPassword,
+      required this.isFname,
+      required this.isLname})
+      : super(key: key);
 
   final TextEditingController controller;
   final String hinttext;
-  final bool isPassword;
   final bool isEmail;
   final bool isPhone;
-  bool obscureText = true; // declare obscureText as a class variable
+  final bool isFname;
+  final bool isLname;
+  final bool isPassword;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          TextFormField(
-            obscureText: isPassword
-                ? obscureText
-                : false, // use the obscureText variable to determine if the password field should be obscured
-            controller: controller,
-            keyboardType: isEmail
-                ? TextInputType.emailAddress
-                : isPhone
-                    ? TextInputType.phone
-                    : isPassword
-                        ? TextInputType.visiblePassword
-                        : TextInputType.text,
-            validator: (value) {
-              if (isEmail) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your Email';
-                } else if (!RegExp(
-                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                    .hasMatch(value)) {
-                  return 'Please enter valid Email';
-                }
-                return null;
-              }
-              if (isPassword) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your Password';
-                } else if (value.length < 8) {
-                  return 'Password must be atleast 8 character';
-                }
-                return null;
-              }
-              if (isPhone) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your phone number';
-                }
-                if (value.length != 10 && value.length > 10) {
-                  return 'Phone number is invalid';
-                }
+  State<TextFields> createState() => _TextFieldsState();
+}
 
-                return null;
+class _TextFieldsState extends State<TextFields> {
+  bool isHidden = true;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextFormField(
+          obscureText: widget.isPassword ? isHidden : false,
+          controller: widget.controller,
+          keyboardType: widget.isEmail
+              ? TextInputType.emailAddress
+              : widget.isPhone
+                  ? TextInputType.phone
+                  : TextInputType.text,
+          validator: (value) {
+            if (widget.isFname) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your First name';
+              }
+              return null;
+            }
+            if (widget.isLname) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your Last name';
+              }
+              return null;
+            }
+            if (widget.isPhone) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your phone number';
+              }
+              if (value.length != 10 && value.length > 10) {
+                return 'Phone number is invalid';
               }
 
               return null;
-            },
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(10),
+            }
+            if (widget.isEmail) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your Email';
+              } else if (!RegExp(
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  .hasMatch(value)) {
+                return 'Please enter valid Email';
+              }
+              return null;
+            }
+            if (widget.isPassword != null) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your Password';
+              } else if (value.length < 8) {
+                return 'Password must be atleast 8 character';
+              }
+              return null;
+            }
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 2,
               ),
-              hintText: hinttext,
-              suffixIcon:
-                  isPassword // add suffixIcon only if isPassword is true
-                      ? IconButton(
-                          icon: Icon(
-                            obscureText
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            // toggle the obscureText variable when the IconButton is pressed
-                            obscureText = !obscureText;
-                          },
-                        )
-                      : null,
+              borderRadius: BorderRadius.circular(10),
             ),
+            hintText: widget.hinttext,
+            suffixIcon: widget.isPassword
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isHidden = !isHidden;
+                      });
+                    },
+                    icon: isHidden
+                        ? Icon(Icons.visibility_off)
+                        : Icon(Icons.remove_red_eye_outlined),
+                  )
+                : null,
           ),
-          SizedBox(
-            height: 10,
-          )
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 10,
+        )
+      ],
     );
   }
 }

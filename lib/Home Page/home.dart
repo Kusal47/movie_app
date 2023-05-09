@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.black,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: TextFont(text: 'Netflix'),
+          title: TextFont(text: 'Cinemania'),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
