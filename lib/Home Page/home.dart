@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tmdb_api/tmdb_api.dart';
 
+import '../Authentication/auth.dart';
 import '../FontStyle/text_style.dart';
 import '../Login Register/login_page.dart';
 import '../Movie Pages/search_page.dart';
@@ -106,12 +107,13 @@ class _HomePageState extends State<HomePage> {
                   child: Text("Logout"),
                 ),
               ];
-            }, onSelected: (value) {
+            }, onSelected: (value) async {
               if (value == 0) {
                 print("My Account menu is selected.");
               } else if (value == 1) {
                 print("Settings menu is selected.");
               } else if (value == 2) {
+                await AuthService().SignOut();
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => LoginPage()));
               }

@@ -15,4 +15,7 @@ await auth
           .createUserWithEmailAndPassword(email: email, password: password);
  
   }
+  Future  SignOut() async {
+    await auth.signOut();
+  }
 }
