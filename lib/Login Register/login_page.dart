@@ -20,9 +20,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[800],
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Login Page'),
         centerTitle: true,
       ),
@@ -34,8 +34,15 @@ class _LoginPageState extends State<LoginPage> {
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Icon(
+                    Icons.account_circle_outlined,
+                    size: 100,
+                    color: Colors.white,
+                  ),
+                ),
                 TextFields(
                   controller: emailController,
                   isPassword: false,
@@ -44,7 +51,6 @@ class _LoginPageState extends State<LoginPage> {
                   isPhone: false,
                   isFname: false,
                   isLname: false,
-                  
                 ),
                 TextFields(
                   controller: passController,
@@ -71,7 +77,6 @@ class _LoginPageState extends State<LoginPage> {
                       passController.clear();
                     }),
                 SizedBox(height: 20),
-               
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -104,7 +109,6 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-       
         ),
       ),
     );

@@ -78,7 +78,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   isPhone: false,
                   isEmail: true,
                   isPassword: false,
-       
                 ),
                 TextFields(
                   controller: passC,
@@ -88,9 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   isPhone: false,
                   isEmail: false,
                   isPassword: true,
-                  
                 ),
-              
                 TextFormField(
                   obscureText: isHidden ? false : true,
                   controller: passConfirm,
@@ -104,6 +101,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     return null;
                   },
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[900],
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         width: 2,
@@ -119,11 +118,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                       icon: isHidden
                           ? Icon(Icons.visibility_off)
-                          : Icon(Icons.visibility),
+                          : Icon(Icons.remove_red_eye_outlined),
                     ),
                   ),
                 ),
-
                 Row(
                   children: [
                     Checkbox(
@@ -152,7 +150,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             'Email': emailC.text,
                             'Phone Number': int.parse(PhoneC.text),
                             'Password': passC.text.trim(),
-
                           });
                           Navigator.pushReplacement(
                               context,

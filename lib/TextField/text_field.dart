@@ -20,6 +20,10 @@ class TextFields extends StatefulWidget {
   final bool isLname;
   final bool isPassword;
 
+  void dispose() {
+    controller.dispose();
+  }
+
   @override
   State<TextFields> createState() => _TextFieldsState();
 }
@@ -81,6 +85,8 @@ class _TextFieldsState extends State<TextFields> {
             }
           },
           decoration: InputDecoration(
+            fillColor: Colors.grey[900],
+            filled: true,
             border: OutlineInputBorder(
               borderSide: BorderSide(
                 width: 2,
@@ -96,9 +102,8 @@ class _TextFieldsState extends State<TextFields> {
                       });
                     },
                     icon: isHidden
-                        ? Icon(Icons.visibility_off)
-                        : Icon(Icons.remove_red_eye_outlined),
-                  )
+                        ? Icon(Icons.remove_red_eye_outlined)
+                        : Icon(Icons.visibility_off))
                 : null,
           ),
         ),
