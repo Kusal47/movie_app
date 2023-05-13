@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'FontStyle/text_style.dart';
-// import 'package:http/http.dart' as http;
+// import 'package:video_player/video_player.dart';
+// // import 'package:chewie/chewie.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   DetailPage({
     super.key,
     this.movienName,
@@ -26,13 +27,18 @@ class DetailPage extends StatelessWidget {
   final List? cast;
 
   @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         body: ListView(
-          // physics: BouncingScrollPhysics(
-          //     decelerationRate: ScrollDecelerationRate.normal),
+          physics: BouncingScrollPhysics(
+              decelerationRate: ScrollDecelerationRate.normal),
           children: [
             Container(
               height: 300,
@@ -43,7 +49,7 @@ class DetailPage extends StatelessWidget {
                       height: 300,
                       width: MediaQuery.of(context).size.width,
                       child: Image.network(
-                        movieImage!,
+                        widget.movieImage!,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -53,9 +59,30 @@ class DetailPage extends StatelessWidget {
                     left: 145,
                     child: InkWell(
                       onTap: () async {
-                        print('Trailer is' + trailers!.toString());
-                        if (trailers != null && trailers!.isNotEmpty) {
-                          await launch(trailers![0]);
+                        if (widget.trailers != null &&
+                            widget.trailers!.isNotEmpty) {
+                          await launch(widget.trailers![0]);
+                          print('Trailer is' + widget.trailers!.toString());
+                        } else {
+                          print('Trailer is currently unavailable');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Trailer is currently unavailable',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'serif'),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: EdgeInsets.all(30),
+                              duration: Duration(seconds: 3),
+                              backgroundColor: Colors.white,
+                            ),
+                          );
                         }
                       },
                       child: Icon(
@@ -92,15 +119,24 @@ class DetailPage extends StatelessWidget {
 
                   Positioned(
                       child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 15.0),
+                    padding: const EdgeInsets.only(left: 8.0, top: 0),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        size: 30,
-                        color: Colors.white,
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[500],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 30,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   )),
@@ -118,8 +154,8 @@ class DetailPage extends StatelessWidget {
                     width: 150,
                     padding: EdgeInsets.all(10),
                     child: Image.network(
-                      posterImage != null
-                          ? posterImage!
+                      widget.posterImage != null
+                          ? widget.posterImage!
                           : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
                       fit: BoxFit.cover,
                     )),
@@ -137,21 +173,25 @@ class DetailPage extends StatelessWidget {
                               Icons.star,
                               color: Colors.yellow,
                             ),
-                            TextFont(text: 'Rating: $movieRating', size: 16),
+                            TextFont(
+                                text: 'Rating: ${widget.movieRating}',
+                                size: 16),
                           ],
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
                         child: TextFont(
-                          text: movienName != null ? movienName! : 'Loading...',
+                          text: widget.movienName != null
+                              ? widget.movienName!
+                              : 'Loading...',
                           size: 26,
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
                         child: TextFont(
-                          text: 'Release Date: $movieReleaseDate',
+                          text: 'Release Date: ${widget.movieReleaseDate}',
                           size: 16,
                         ),
                       ),
@@ -176,12 +216,13 @@ class DetailPage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   child: TextFont(
-                    text: movieOverview!,
+                    text: widget.movieOverview!,
                     size: 16,
                   ),
                 ),
               ],
             ),
+            // FOR CAST DETAILS
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -193,14 +234,14 @@ class DetailPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 200,
+                  height: MediaQuery.of(context).size.height * 0.5,
                   width: MediaQuery.of(context).size.width,
                   child: ListView.builder(
-                    itemCount: cast!.length,
+                    itemCount: widget.cast!.length,
                     itemBuilder: ((context, index) {
-                      return cast![index]['profile_path'] != null ||
-                              cast![index]['name'] != null ||
-                              cast![index]['character'] != null
+                      return widget.cast![index]['profile_path'] != null ||
+                              widget.cast![index]['name'] != null ||
+                              widget.cast![index]['character'] != null
                           ? Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -209,9 +250,11 @@ class DetailPage extends StatelessWidget {
                                     height: 90,
                                     width: 90,
                                     child: Image.network(
-                                      cast![index]['profile_path'] != null
+                                      widget.cast![index]['profile_path'] !=
+                                              null
                                           ? 'https://image.tmdb.org/t/p/w500/' +
-                                              cast![index]['profile_path']
+                                              widget.cast![index]
+                                                  ['profile_path']
                                           : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
                                       fit: BoxFit.cover,
                                     )),
@@ -224,14 +267,17 @@ class DetailPage extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       TextFont(
-                                        text: cast![index]['name'] != null
-                                            ? cast![index]['name']
-                                            : 'Loading...',
+                                        text:
+                                            widget.cast![index]['name'] != null
+                                                ? widget.cast![index]['name']
+                                                : 'Loading...',
                                         size: 14,
                                       ),
                                       TextFont(
-                                        text: cast![index]['character'] != null
-                                            ? cast![index]['character']
+                                        text: widget.cast![index]
+                                                    ['character'] !=
+                                                null
+                                            ? widget.cast![index]['character']
                                             : 'Loading...',
                                         size: 12,
                                       ),

@@ -19,7 +19,6 @@ class TvShows extends StatelessWidget {
   final List tvshows;
   final String apiKey;
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,10 +38,10 @@ class TvShows extends StatelessWidget {
               itemBuilder: ((context, index) {
                 return InkWell(
                     onTap: () async {
-                   final trailer =
-                        await ApiService.fetchTrailer(apiKey, tvshows[index]['id']);
-                    final cast =
-                        await ApiService.getTvCast(apiKey, tvshows[index]['id']);
+                      final trailer = await ApiService.fetchTrailer(
+                          apiKey, tvshows[index]['id']);
+                      final cast = await ApiService.getTvCast(
+                          apiKey, tvshows[index]['id']);
 
                       if (tvshows[index]['original_name'] != null &&
                           tvshows[index]['backdrop_path'] != null &&
@@ -84,7 +83,7 @@ class TvShows extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            padding: EdgeInsets.all(40),
+                            padding: EdgeInsets.all(30),
                             duration: Duration(seconds: 3),
                             backgroundColor: Colors.white,
                           ),
