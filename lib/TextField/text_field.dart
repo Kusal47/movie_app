@@ -75,7 +75,7 @@ class _TextFieldsState extends State<TextFields> {
               }
               return null;
             }
-            if (widget.isPassword != null) {
+            if (widget.isPassword) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your Password';
               } else if (value.length < 8) {
@@ -83,6 +83,7 @@ class _TextFieldsState extends State<TextFields> {
               }
               return null;
             }
+            return null;
           },
           decoration: InputDecoration(
             fillColor: Colors.grey[900],

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'FontStyle/text_style.dart';
-// import 'package:video_player/video_player.dart';
-// // import 'package:chewie/chewie.dart';
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -37,8 +34,8 @@ class _DetailPageState extends State<DetailPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: ListView(
-          physics: BouncingScrollPhysics(
-              decelerationRate: ScrollDecelerationRate.normal),
+          // physics: BouncingScrollPhysics(
+          //     decelerationRate: ScrollDecelerationRate.normal),
           children: [
             Container(
               height: 300,
@@ -237,7 +234,7 @@ class _DetailPageState extends State<DetailPage> {
                   height: MediaQuery.of(context).size.height * 0.5,
                   width: MediaQuery.of(context).size.width,
                   child: ListView.builder(
-                    itemCount: widget.cast!.length,
+                    itemCount: widget.cast?.length,
                     itemBuilder: ((context, index) {
                       return widget.cast![index]['profile_path'] != null ||
                               widget.cast![index]['name'] != null ||

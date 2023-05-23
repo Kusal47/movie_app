@@ -1,25 +1,29 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class ApiService {
-    static Future<List<dynamic>> getMovieCast(String apiKey, int movieId) async {
+  static final Dio _dio = Dio();
+
+  static Future<List<dynamic>> getMovieCast(String apiKey, int movieId) async {
     final url =
-'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=$apiKey';
-    final response = await http.get(Uri.parse(url));
-    final data = jsonDecode(response.body);
+        'https://api.themoviedb.org/3/movie/$movieId/credits?api_key=$apiKey';
+
+    final response = await _dio.get(url);
+    final data = response.data;
+    
     if (response.statusCode == 200) {
       return data['cast'];
     } else {
       throw Exception('Failed to load search results');
     }
   }
+
   static Future<List<dynamic>> getTvCast(String apiKey, int movieId) async {
     final url =
         'https://api.themoviedb.org/3/tv/$movieId/credits?api_key=$apiKey';
 
-    final response = await http.get(Uri.parse(url));
-    final data = jsonDecode(response.body);
+    final response = await _dio.get(url);
+    final data = response.data;
+    
     if (response.statusCode == 200) {
       return data['cast'];
     } else {
@@ -28,10 +32,13 @@ class ApiService {
   }
 
   static Future<String?> fetchTrailer(String apiKey, int movieId) async {
-    final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US'));
+    final url =
+        'https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey&language=en-US';
+
+    final response = await _dio.get(url);
+    final data = response.data;
+    
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
       if (data['results'].isNotEmpty) {
         return 'https://www.youtube.com/watch?v=${data['results'][0]['key']}';
       }

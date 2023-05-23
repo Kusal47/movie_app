@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../FontStyle/text_style.dart';
 import '../details.dart';
 import '../ApiServices/services.dart';

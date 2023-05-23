@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:movieapp/FontStyle/text_style.dart';
 
 import '../ApiServices/Searching.dart';
@@ -199,11 +196,7 @@ class _SearchPageState extends State<SearchPage> {
                                                 ),
                                                 TextFont(
                                                     text: movie['vote_average']
-                                                                .toString() !=
-                                                            null
-                                                        ? movie['vote_average']
-                                                            .toString()
-                                                        : 'Processing...',
+                                                                .toString(),
                                                     size: 14),
                                               ],
                                             ),
