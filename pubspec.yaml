@@ -38,12 +38,6 @@ dependencies:
   dio: ^4.0.0
   google_fonts: 
   tmdb_api:
-  # http:
-  get: 
-  url_launcher: 6.1.10
-  video_player: ^2.1.10
-  chewie: ^1.2.2
-  carousel_slider: ^4.2.1
   firebase_auth: ^4.4.0
   firebase_core: ^2.11.0
   cloud_firestore: ^4.5.0

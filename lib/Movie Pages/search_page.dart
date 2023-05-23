@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:movieapp/FontStyle/text_style.dart';
-
 import '../ApiServices/Searching.dart';
 import '../ApiServices/services.dart';
 import '../details.dart';

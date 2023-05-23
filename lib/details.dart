@@ -1,5 +1,5 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'FontStyle/text_style.dart';
 
 class DetailPage extends StatefulWidget {
@@ -55,33 +55,61 @@ class _DetailPageState extends State<DetailPage> {
                     bottom: 110,
                     left: 145,
                     child: InkWell(
-                      onTap: () async {
-                        if (widget.trailers != null &&
-                            widget.trailers!.isNotEmpty) {
-                          await launch(widget.trailers![0]);
-                          print('Trailer is' + widget.trailers!.toString());
-                        } else {
-                          print('Trailer is currently unavailable');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Trailer is currently unavailable',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'serif'),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.all(30),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.white,
-                            ),
-                          );
-                        }
-                      },
+                     onTap: () async {
+  if (widget.trailers != null && widget.trailers!.isNotEmpty) {
+    try {
+      final response = await Dio().get(widget.trailers![0]);
+      if (response.statusCode == 200) {
+        print('Trailer is available');
+      } else {
+        print('Trailer is currently unavailable');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Trailer is currently unavailable',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'serif',
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            padding: EdgeInsets.all(30),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.white,
+          ),
+        );
+      }
+    } catch (error) {
+      print('Error occurred: $error');
+    }
+  } else {
+    print('Trailer is currently unavailable');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Trailer is currently unavailable',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'serif',
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        padding: EdgeInsets.all(30),
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.white,
+      ),
+    );
+  }
+},
+
                       child: Icon(
                         Icons.play_circle_outlined,
                         size: 80,
@@ -89,31 +117,6 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                     ),
                   ),
-                  // Positioned(
-                  //   bottom: 60,
-                  //   left: 126,
-                  //   child: ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.red,
-                  //       foregroundColor: Colors.white,
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(30),
-                  //       ),
-                  //     ),
-                  //     onPressed: () async {
-                  //       print('Trailer is ${trailers}');
-                  //       if (trailers != null && trailers!.isNotEmpty) {
-                  //         await launch(trailers![0] );
-                  //       }
-
-                  //     },
-                  //     child: TextFont(
-                  //       text: 'Watch Trailer',
-                  //       size: 16,
-                  //     ),
-                  //   ),
-                  // ),
-
                   Positioned(
                       child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, top: 0),
