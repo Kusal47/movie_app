@@ -41,6 +41,10 @@ dependencies:
   firebase_auth: ^4.4.0
   firebase_core: ^2.11.0
   cloud_firestore: ^4.5.0
+  youtube_player_flutter: ^8.0.0
+  esewa_flutter: ^1.1.2
+  khalti_flutter: ^2.2.1
+
   
 dev_dependencies:
   flutter_test:
@@ -67,6 +71,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/Image/
+
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

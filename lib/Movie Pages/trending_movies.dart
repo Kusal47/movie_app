@@ -1,64 +1,63 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import '../FontStyle/text_style.dart';
+import '../const/export.dart';
 import '../details.dart';
 import '../ApiServices/services.dart';
 
 
 class TrendingMovies extends StatelessWidget {
   //adding the constructor to receive the list of movies
-  TrendingMovies({super.key, required this.trending, required this.apiKey});
+  const TrendingMovies({super.key, required this.trending, });
 
   //receive the list of movies from the main.dart
   final List trending;
-  final String apiKey;
+ 
  
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFont(
-            text: 'Trending Movies',
+          const TextFont(
+            text: AppStrings.trending,
             size: 26,
           ),
-          Container(
+          SizedBox(
             height: 276,
             child: ListView.builder(
-              physics: BouncingScrollPhysics(
+              physics: const BouncingScrollPhysics(
                   decelerationRate: ScrollDecelerationRate.normal),
               itemBuilder: ((context, index) {
                 return InkWell(
                     onTap: () async {
-                      final trailer = await ApiService.fetchTrailer(apiKey,trending[index]['id']);
-                      final cast = await ApiService.getMovieCast(apiKey,trending[index]['id']);
+                      final trailer = await ApiService.fetchTrailer(trending[index][AppStrings.id]);
+                      final cast = await ApiService.getMovieCast(trending[index][AppStrings.id]);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailPage(
-                                  movienName: trending[index]['title'] != null
-                                      ? trending[index]['title']
-                                      : trending[index]['name'],
+                                  movieName: trending[index][AppStrings.title] ?? trending[index][AppStrings.name],
                                   posterImage:
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          trending[index]['poster_path'],
+                                      NetworkPath.networkImagePath  +
+                                          trending[index][AppStrings.poster_path],
                                   movieImage:
-                                      'https://image.tmdb.org/t/p/w500/' +
-                                          trending[index]['backdrop_path'],
-                                  movieRating: trending[index]['vote_average']
+                                      NetworkPath.networkImagePath  +
+                                          trending[index][AppStrings.backdrop_path],
+                                  movieRating: trending[index][AppStrings.vote_average]
                                       .toString(),
                                   movieReleaseDate:
-                                      trending[index]['release_date'] != null
-                                          ? trending[index]['release_date']
-                                          : trending[index]['first_air_date'],
-                                  movieOverview: trending[index]['overview'],
+                                      trending[index][AppStrings.release_date] ?? trending[index][AppStrings.first_air_date],
+                                  movieOverview: trending[index][AppStrings.overview],
                                   trailers: trailer != null ? [trailer] : [],
                                   cast: cast)));
                     },
                     child: Container(
-                        padding: EdgeInsets.only(right: 5),
+                        padding: const EdgeInsets.only(right: 5),
                         width: 140,
                         child: Column(
                           children: [
@@ -69,19 +68,17 @@ class TrendingMovies extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                       image: NetworkImage(
-                                    trending[index]['poster_path'] != null
-                                        ? 'https://image.tmdb.org/t/p/w500/' +
-                                            trending[index]['poster_path']
-                                        : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                                    trending[index][AppStrings.poster_path] != null
+                                        ? NetworkPath.networkImagePath  +
+                                            trending[index][AppStrings.poster_path]
+                                        : NetworkPath.placeholderThumbnail,
                                   )),
                                 ),
                               ),
                             ),
                             Container(
                               child: TextFont(
-                                text: trending[index]['title'] != null
-                                    ? trending[index]['title']
-                                    : trending[index]['name'],
+                                text: trending[index][AppStrings.title] ?? trending[index][AppStrings.name],
                                 size: 16,
                                 overflow: TextOverflow.ellipsis,
                               ),

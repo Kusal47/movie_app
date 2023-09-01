@@ -1,11 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:movieapp/Buttons/button.dart';
+import 'package:movieapp/Movie%20Pages/buy_ticket.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
 import 'FontStyle/text_style.dart';
+import 'const/export.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage({
+  const DetailPage({
     super.key,
-    this.movienName,
+    this.movieName,
     this.posterImage,
     this.movieImage,
     this.movieRating,
@@ -14,7 +19,7 @@ class DetailPage extends StatefulWidget {
     this.trailers,
     this.cast,
   });
-  final String? movienName,
+  final String? movieName,
       posterImage,
       movieImage,
       movieRating,
@@ -22,6 +27,8 @@ class DetailPage extends StatefulWidget {
       movieOverview;
   final List<String>? trailers;
   final List? cast;
+
+  //updating the state of the app
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -34,15 +41,13 @@ class _DetailPageState extends State<DetailPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: ListView(
-          // physics: BouncingScrollPhysics(
-          //     decelerationRate: ScrollDecelerationRate.normal),
           children: [
-            Container(
+            SizedBox(
               height: 300,
               child: Stack(
                 children: [
                   Positioned(
-                    child: Container(
+                    child: SizedBox(
                       height: 300,
                       width: MediaQuery.of(context).size.width,
                       child: Image.network(
@@ -52,98 +57,156 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                   ),
                   Positioned(
-                    bottom: 110,
-                    left: 145,
-                    child: InkWell(
-                     onTap: () async {
-  if (widget.trailers != null && widget.trailers!.isNotEmpty) {
-    try {
-      final response = await Dio().get(widget.trailers![0]);
-      if (response.statusCode == 200) {
-        print('Trailer is available');
-      } else {
-        print('Trailer is currently unavailable');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Trailer is currently unavailable',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'serif',
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            padding: EdgeInsets.all(30),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.white,
-          ),
-        );
-      }
-    } catch (error) {
-      print('Error occurred: $error');
-    }
-  } else {
-    print('Trailer is currently unavailable');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Trailer is currently unavailable',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'serif',
-          ),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        padding: EdgeInsets.all(30),
-        duration: Duration(seconds: 3),
-        backgroundColor: Colors.white,
-      ),
-    );
-  }
-},
-
-                      child: Icon(
-                        Icons.play_circle_outlined,
-                        size: 80,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                  Positioned(
+                      width: MediaQuery.of(context).size.width,
+                      bottom: 0,
                       child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, top: 0),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Buttons(
+                              btnname: AppStrings.trailer,
+                              size: 20,
+                              color: Colors.red,
+                              isDetail: true,
+                              onPressed: () async {
+                                try {
+                                  // Assuming widget.trailers[0] is a YouTube video URL
+                                  final youtubeUrl = widget.trailers![0];
+
+                                  Response response =
+                                      await Dio().get(youtubeUrl);
+
+                                  if (response.statusCode == 200) {
+                                    // Parse the response to extract the video ID
+                                    String videoId =
+                                        YoutubePlayer.convertUrlToId(
+                                            youtubeUrl)!;
+
+                                    if (videoId.isNotEmpty) {
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return SafeArea(
+                                              child: Scaffold(
+                                                body: Stack(children: [
+                                                  Center(
+                                                    child: YoutubePlayer(
+                                                      aspectRatio: 4 / 3,
+                                                      controller:
+                                                          YoutubePlayerController(
+                                                        initialVideoId: videoId,
+                                                        flags:
+                                                            const YoutubePlayerFlags(
+                                                          enableCaption: true,
+                                                          autoPlay: true,
+                                                          mute: false,
+                                                          forceHD: true,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0,
+                                                            top: 8.0),
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .arrow_back_ios_new,
+                                                            size: 25,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: TextFont(
+                                                              text: AppStrings
+                                                                  .return_to_details,
+                                                              size: 25,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ]),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    print(response.statusMessage);
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.pop(context);
+                                  }
+                                } catch (error) {
+                                  print('Error occurred: $error');
+                                }
+                              },
+                            ),
+                            Buttons(
+                              btnname: AppStrings.tickets,
+                              size: 20,
+                              isDetail: true,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => BuyTicketPage(
+                                              movieName: widget.movieName,
+                                              movieImage: widget.movieImage,
+                                              movieReleaseDate:
+                                                  widget.movieReleaseDate,
+                                            )));
+                              },
+                            ),
+                          ],
+                        ),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, top: 8.0),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
                       child: Container(
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           color: Colors.grey[500],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.arrow_back_ios_new,
-                          size: 30,
+                          size: 25,
                           color: Colors.white,
                         ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -152,11 +215,11 @@ class _DetailPageState extends State<DetailPage> {
                 Container(
                     height: 220,
                     width: 150,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Image.network(
                       widget.posterImage != null
                           ? widget.posterImage!
-                          : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                          : NetworkPath.placeholderThumbnail,
                       fit: BoxFit.cover,
                     )),
                 Expanded(
@@ -169,29 +232,31 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.star,
                               color: Colors.yellow,
                             ),
                             TextFont(
-                                text: 'Rating: ${widget.movieRating}',
+                                text:
+                                    '${AppStrings.rating} ${widget.movieRating}',
                                 size: 16),
                           ],
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: TextFont(
-                          text: widget.movienName != null
-                              ? widget.movienName!
-                              : 'Loading...',
+                          text: widget.movieName != null
+                              ? widget.movieName!
+                              : AppStrings.loading,
                           size: 26,
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: TextFont(
-                          text: 'Release Date: ${widget.movieReleaseDate}',
+                          text:
+                              '${AppStrings.release_on} ${widget.movieReleaseDate}',
                           size: 16,
                         ),
                       ),
@@ -200,21 +265,21 @@ class _DetailPageState extends State<DetailPage> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.all(10),
                   child: TextFont(
-                    text: 'Overview',
+                    text: AppStrings.descOverview,
                     size: 30,
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: TextFont(
                     text: widget.movieOverview!,
                     size: 16,
@@ -226,10 +291,10 @@ class _DetailPageState extends State<DetailPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
                   child: TextFont(
-                    text: 'Cast',
+                    text: AppStrings.castNames,
                     size: 30,
                   ),
                 ),
@@ -239,26 +304,29 @@ class _DetailPageState extends State<DetailPage> {
                   child: ListView.builder(
                     itemCount: widget.cast?.length,
                     itemBuilder: ((context, index) {
-                      return widget.cast![index]['profile_path'] != null ||
-                              widget.cast![index]['name'] != null ||
-                              widget.cast![index]['character'] != null
+                      return widget.cast![index][AppStrings.poster_path] !=
+                                  null ||
+                              widget.cast![index][AppStrings.name] != null ||
+                              widget.cast![index][AppStrings.character] != null
                           ? Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                    padding: EdgeInsets.only(left: 15, top: 10),
+                                    padding: const EdgeInsets.only(
+                                        left: 15, top: 10),
                                     height: 90,
                                     width: 90,
                                     child: Image.network(
-                                      widget.cast![index]['profile_path'] !=
+                                      widget.cast![index]
+                                                  [AppStrings.profile_path] !=
                                               null
-                                          ? 'https://image.tmdb.org/t/p/w500/' +
+                                          ? NetworkPath.networkImagePath +
                                               widget.cast![index]
-                                                  ['profile_path']
-                                          : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                                                  [AppStrings.profile_path]
+                                          : NetworkPath.thumbnail,
                                       fit: BoxFit.cover,
                                     )),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Expanded(
@@ -267,18 +335,15 @@ class _DetailPageState extends State<DetailPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       TextFont(
-                                        text:
-                                            widget.cast![index]['name'] != null
-                                                ? widget.cast![index]['name']
-                                                : 'Loading...',
+                                        text: widget.cast![index]
+                                                [AppStrings.name] ??
+                                            AppStrings.loading,
                                         size: 14,
                                       ),
                                       TextFont(
                                         text: widget.cast![index]
-                                                    ['character'] !=
-                                                null
-                                            ? widget.cast![index]['character']
-                                            : 'Loading...',
+                                                [AppStrings.character] ??
+                                            AppStrings.loading,
                                         size: 12,
                                       ),
                                     ],
@@ -286,11 +351,11 @@ class _DetailPageState extends State<DetailPage> {
                                 )
                               ],
                             )
-                          : Padding(
+                          : const Padding(
                               padding: EdgeInsets.only(top: 30.0),
                               child: Center(
                                 child: TextFont(
-                                  text: 'Cast Unavailable',
+                                  text: AppStrings.cast_unavailable,
                                   size: 14,
                                 ),
                               ),
