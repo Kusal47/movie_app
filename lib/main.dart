@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import 'package:khalti_flutter/khalti_flutter.dart';
 import 'Home Page/home.dart';
 import 'Login Register/login_page.dart';
+import 'const/export.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  await WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
@@ -18,55 +19,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+    return KhaltiScope(
+        publicKey: 'test_public_key_d5d9f63743584dc38753056b0cc737d5',
+        enabledDebugging: true,
+        builder: (context, navKey) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+              theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.transparent,
       ),
-      home: SplashScreen(),
-    );
+            title: AppStrings.appName,
+            home: const SplashScreen(),
+            navigatorKey: navKey,
+            localizationsDelegates: const [
+              KhaltiLocalizations.delegate,
+            ],
+          );
+        });
   }
 }
-
-// class HomeScreen extends StatefulWidget {
-//   HomeScreen({super.key});
-
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-//   bool isHidden = false;
-//   TextEditingController emailC = TextEditingController();
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Padding(
-//         padding: const EdgeInsets.all(50.0),
-//         child: Container(
-//           child: TextField(
-//             controller: emailC,
-//             obscureText: isHidden ? false : true,
-//             decoration: InputDecoration(
-//               hintText: 'Enter your password',
-//               suffixIcon: IconButton(
-//                 onPressed: () {
-//                   setState(() {
-//                     isHidden = !isHidden;
-//                   });
-//                 },
-//                 icon: isHidden
-//                     ? Icon(Icons.visibility_off)
-//                     : Icon(Icons.visibility),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -80,7 +52,7 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(
-        Duration(seconds: 3),
+        const Duration(seconds: 3),
         () => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -88,9 +60,9 @@ class SplashScreenState extends State<SplashScreen> {
                     stream: FirebaseAuth.instance.authStateChanges(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return HomePage();
+                        return const HomePage();
                       } else {
-                        return LoginPage();
+                        return const LoginPage();
                       }
                     }))));
   }
@@ -104,29 +76,29 @@ class SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: 100,
                 width: 90,
-                child: Image.asset('assets/Image/Movie Icon.png'),
+                child: Image.asset(AssetsPath.logo),
               ),
-              DefaultTextStyle(
+              const DefaultTextStyle(
+                  style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white70),
                   child: Text(
-                    'Cinemania',
+                    AppStrings.appName,
                     style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
                         color: Colors.indigo),
-                  ),
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white70)),
-              SizedBox(
+                  )),
+              const SizedBox(
                 height: 20,
               ),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
-                child: LinearProgressIndicator(
+                child: const LinearProgressIndicator(
                   backgroundColor: Colors.black,
                   minHeight: 5,
                 ),

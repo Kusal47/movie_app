@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:movieapp/const/export.dart';
 import '../ApiServices/services.dart';
 import '../FontStyle/text_style.dart';
 import '../details.dart';
@@ -8,68 +11,62 @@ class TvShows extends StatelessWidget {
   const TvShows({
     super.key,
     required this.tvshows,
-    required this.apiKey,
   });
 
   //receive the list of tvshows from the main.dart
   final List tvshows;
-  final String apiKey;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFont(
-            text: ' Popular Tvshows',
+          const TextFont(
+            text: AppStrings.tvshows,
             size: 26,
           ),
-          Container(
+          SizedBox(
             height: 278,
             child: ListView.builder(
-              physics: BouncingScrollPhysics(
+              physics: const BouncingScrollPhysics(
                   decelerationRate: ScrollDecelerationRate.normal),
               itemBuilder: ((context, index) {
                 return InkWell(
                     onTap: () async {
-                      final trailer = await ApiService.fetchTrailer(
-                          apiKey, tvshows[index]['id']);
-                      final cast = await ApiService.getTvCast(
-                          apiKey, tvshows[index]['id']);
+                      final trailer = await ApiService.fetchTrailer( tvshows[index]['id']);
+                      final cast = await ApiService.getTvCast( tvshows[index]['id']);
 
-                      if (tvshows[index]['original_name'] != null &&
-                          tvshows[index]['backdrop_path'] != null &&
-                          tvshows[index]['vote_average'] != null &&
-                          tvshows[index]['first_air_date'] != null &&
-                          tvshows[index]['overview'] != null) {
+                      if (tvshows[index][AppStrings.original_name] != null &&
+                          tvshows[index][AppStrings.backdrop_path] != null &&
+                          tvshows[index][AppStrings.vote_average] != null &&
+                          tvshows[index][AppStrings.first_air_date] != null &&
+                          tvshows[index][AppStrings.overview] != null) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => DetailPage(
-                                    movienName:
-                                        tvshows[index]['original_name'] != null
-                                            ? tvshows[index]['original_name']
-                                            : tvshows[index]['name'],
+                                    movieName:
+                                        tvshows[index][AppStrings.original_name] ?? tvshows[index][AppStrings.name],
                                     posterImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            tvshows[index]['poster_path'],
+                                        NetworkPath.networkImagePath  +
+                                            tvshows[index][AppStrings.poster_path],
                                     movieImage:
-                                        'https://image.tmdb.org/t/p/w500/' +
-                                            tvshows[index]['backdrop_path'],
-                                    movieRating: tvshows[index]['vote_average']
+                                        NetworkPath.networkImagePath  +
+                                            tvshows[index][AppStrings.backdrop_path],
+                                    movieRating: tvshows[index][AppStrings.vote_average]
                                         .toString(),
                                     movieReleaseDate: tvshows[index]
-                                        ['first_air_date'],
-                                    movieOverview: tvshows[index]['overview'],
+                                        [AppStrings.first_air_date],
+                                    movieOverview: tvshows[index][AppStrings.overview],
                                     trailers: trailer != null ? [trailer] : [],
                                     cast: cast)));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              'Sorry, this Tvshow is unavailable',
+                            content: const Text(
+                              AppStrings.tvShows_error,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 15,
@@ -79,15 +76,15 @@ class TvShows extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            padding: EdgeInsets.all(30),
-                            duration: Duration(seconds: 3),
+                            padding: const EdgeInsets.all(30),
+                            duration: const Duration(seconds: 3),
                             backgroundColor: Colors.white,
                           ),
                         );
                       }
                     },
                     child: Container(
-                        padding: EdgeInsets.only(right: 5),
+                        padding: const EdgeInsets.only(right: 5),
                         width: 140,
                         child: Column(
                           children: [
@@ -98,22 +95,18 @@ class TvShows extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                       image: NetworkImage(
-                                    tvshows[index]['poster_path'] != null
-                                        ? 'https://image.tmdb.org/t/p/w500/' +
-                                            tvshows[index]['poster_path']
-                                        : 'https://via.placeholder.com/82x120?text=No+Thumbnail',
+                                    tvshows[index][AppStrings.poster_path] != null
+                                        ? NetworkPath.networkImagePath  +
+                                            tvshows[index][AppStrings.poster_path]
+                                        : NetworkPath.placeholderThumbnail,
                                   )),
                                 ),
                               ),
                             ),
-                            Container(
-                              child: TextFont(
-                                text: tvshows[index]['original_name'] != null
-                                    ? tvshows[index]['original_name']
-                                    : tvshows[index]['name'],
-                                size: 16,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            TextFont(
+                              text: tvshows[index][AppStrings.original_name] ?? tvshows[index][AppStrings.name],
+                              size: 16,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         )));

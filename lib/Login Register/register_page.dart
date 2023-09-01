@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../Authentication/auth.dart';
 import '../Buttons/button.dart';
+import '../FontStyle/text_style.dart';
 import '../TextField/text_field.dart';
+import '../const/export.dart';
 import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -14,24 +16,24 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  TextEditingController FirstnameC = TextEditingController();
-  TextEditingController LastnameC = TextEditingController();
-  TextEditingController PhoneC = TextEditingController();
+  TextEditingController firstnameC = TextEditingController();
+  TextEditingController lastnameC = TextEditingController();
+  TextEditingController phoneC = TextEditingController();
   TextEditingController emailC = TextEditingController();
   TextEditingController passC = TextEditingController();
   TextEditingController passConfirm = TextEditingController();
-  bool? isChecked = false;
+  bool isChecked = false;
   bool isHidden = false;
 
   final _formKey = GlobalKey<FormState>();
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  // CollectionReference users = FirebaseFirestore.instance.collection(AppStrings.users);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        title: Text('Register Page'),
+        title: const Text(AppStrings.register),
         centerTitle: true,
       ),
       body: Padding(
@@ -44,83 +46,36 @@ class _RegisterPageState extends State<RegisterPage> {
               key: _formKey,
               child: Column(children: [
                 TextFields(
-                  controller: FirstnameC,
-                  hinttext: 'First Name',
+                  controller: firstnameC,
+                  hinttext:AppStrings.fName,
                   isFname: true,
-                  isLname: false,
-                  isPhone: false,
-                  isEmail: false,
-                  isPassword: false,
                 ),
                 TextFields(
-                  controller: LastnameC,
-                  hinttext: 'Last Name',
-                  isFname: false,
+                  controller: lastnameC,
+                  hinttext: AppStrings.lName,
                   isLname: true,
-                  isPhone: false,
-                  isEmail: false,
-                  isPassword: false,
                 ),
                 TextFields(
-                  controller: PhoneC,
-                  hinttext: 'Phone number',
-                  isFname: false,
-                  isLname: false,
+                  controller: phoneC,
+                  hinttext: AppStrings.phone,
                   isPhone: true,
-                  isEmail: false,
-                  isPassword: false,
                 ),
                 TextFields(
                   controller: emailC,
-                  hinttext: 'Email',
-                  isFname: false,
-                  isLname: false,
-                  isPhone: false,
+                  hinttext: AppStrings.email,
                   isEmail: true,
-                  isPassword: false,
                 ),
                 TextFields(
                   controller: passC,
-                  hinttext: 'Password',
-                  isFname: false,
-                  isLname: false,
-                  isPhone: false,
-                  isEmail: false,
+                  hinttext: AppStrings.password,
                   isPassword: true,
                 ),
-                TextFormField(
-                  obscureText: isHidden ? false : true,
+                TextFields(
                   controller: passConfirm,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Confirm your Password';
-                    }
-                    if (value != passC.text) {
-                      return 'Password did not match';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[900],
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    hintText: 'Confirm Your Password',
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isHidden = !isHidden;
-                        });
-                      },
-                      icon: isHidden
-                          ? Icon(Icons.visibility_off)
-                          : Icon(Icons.remove_red_eye_outlined),
-                    ),
-                  ),
+                  hinttext: AppStrings.confirmPassword,
+                  isPassword: true,
+                  isConfirm: true,
+                  confirmPasswordController: passC,
                 ),
                 Row(
                   children: [
@@ -132,38 +87,67 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    Text('Terms and Conditions'),
+                    const TextFont(text:AppStrings.TOC, size: 18, color: Colors.white),
                   ],
                 ),
                 Buttons(
-                    btnname: 'Register',
+                    btnname: AppStrings.registerbtn,
                     size: 20,
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (isChecked == true) {
                           await AuthService().Register(emailC.text, passC.text);
                           await FirebaseFirestore.instance
-                              .collection('users')
+                              .collection(AppStrings.users)
                               .add({
-                            'First Name': FirstnameC.text,
-                            'Last Name': LastnameC.text,
-                            'Email': emailC.text,
-                            'Phone Number': int.parse(PhoneC.text),
-                            'Password': passC.text.trim(),
+                            AppStrings.fName: firstnameC.text,
+                            AppStrings.lName: lastnameC.text,
+                            AppStrings.email: emailC.text,
+                            AppStrings.phone: int.parse(phoneC.text),
+                            AppStrings.password: passC.text.trim(),
                           });
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => LoginPage()));
-                          FirstnameC.clear();
-                          LastnameC.clear();
-                          PhoneC.clear();
+                                  builder: (context) => const LoginPage()));
+                          firstnameC.clear();
+                          lastnameC.clear();
+                          phoneC.clear();
                           emailC.clear();
                           passC.clear();
                           passConfirm.clear();
                         }
                       }
                     }),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      AppStrings.hasAccount,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                    ),
+                    const SizedBox(width: 5),
+                    InkWell(
+                      child: Text(
+                        AppStrings.loginNow,
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue[200],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterPage()));
+                      },
+                    ),
+                  ],
+                )
               ]),
             ),
           ),
