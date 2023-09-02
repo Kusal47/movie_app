@@ -129,6 +129,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.6"
+  email_otp:
+    dependency: "direct main"
+    description:
+      name: email_otp
+      sha256: cd1c90824f4da83764d8d0fdadcb152e4b4236102f3334f4753fc7f3d53a910b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   esewa_flutter:
     dependency: "direct main"
     description:
@@ -344,6 +352,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  otp_text_field:
+    dependency: "direct main"
+    description:
+      name: otp_text_field
+      sha256: "340b1ed135e1abe9fac0aaebe1c4e48147d95a3e29ecb03ae45ad63a7c28d65d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.3"
   package_info_plus:
     dependency: transitive
     description:
@@ -448,6 +472,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.6"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      sha256: cdbe7530b12ecd9eb455bdaa2fcb8d4dad22e80b8afb4798b41479d5ce26847f
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.5"
   sky_engine:
     dependency: transitive
     description: flutter

@@ -23,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController passC = TextEditingController();
   TextEditingController passConfirm = TextEditingController();
   bool isChecked = false;
-  bool isHidden = false;
 
   final _formKey = GlobalKey<FormState>();
   // CollectionReference users = FirebaseFirestore.instance.collection(AppStrings.users);
@@ -111,8 +110,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               MaterialPageRoute(
                                   builder: (context) => const LoginPage()));
                           firstnameC.clear();
-                          lastnameC.clear();
-                          phoneC.clear();
                           emailC.clear();
                           passC.clear();
                           passConfirm.clear();
@@ -143,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const RegisterPage()));
+                                builder: (context) => const LoginPage()));
                       },
                     ),
                   ],
