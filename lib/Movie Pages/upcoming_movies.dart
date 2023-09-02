@@ -1,61 +1,63 @@
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 
 import '../ApiServices/services.dart';
 import '../FontStyle/text_style.dart';
+import '../const/export.dart';
 import '../details.dart';
 
 class UpcomingMovies extends StatelessWidget {
   //adding the constructor to receive the list of movies
   const UpcomingMovies(
-      {super.key, required this.upcoming, required this.apiKey});
+      {super.key, required this.upcoming, });
 
   //receive the list of movies from the main.dart
   final List upcoming;
-  final String apiKey;
  
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFont(
-            text: 'Upcoming Movies',
+          const TextFont(
+            text:AppStrings.upcoming,
             size: 26,
           ),
-          Container(
+          SizedBox(
             height: 276,
             child: ListView.builder(
-              physics: BouncingScrollPhysics(
+              physics: const BouncingScrollPhysics(
                   decelerationRate: ScrollDecelerationRate.normal),
               itemBuilder: ((context, index) {
                 return InkWell(
                     onTap: () async {
-                      final trailer = await ApiService.fetchTrailer(apiKey,upcoming[index]['id']);
-                      final cast = await ApiService.getMovieCast(apiKey,upcoming[index]['id']);
+                      final trailer = await ApiService.fetchTrailer(upcoming[index][AppStrings.id]);
+                      final cast = await ApiService.getMovieCast(upcoming[index][AppStrings.id]);
 
                     
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => DetailPage(
-                                      movienName: upcoming[index]['title'],
+                                      movieName: upcoming[index][AppStrings.title],
                                       posterImage:
-                                          'https://image.tmdb.org/t/p/w500/' +
-                                              upcoming[index]['poster_path'],
+                                          NetworkPath.networkImagePath +
+                                              upcoming[index][AppStrings.poster_path],
                                       movieImage:
-                                          'https://image.tmdb.org/t/p/w500/' +
-                                              upcoming[index]['backdrop_path'],
+                                         NetworkPath.networkImagePath +
+                                              upcoming[index][AppStrings.backdrop_path],
                                       movieRating: upcoming[index]
-                                              ['vote_average']
+                                              [AppStrings.vote_average]
                                           .toString(),
                                       movieReleaseDate: upcoming[index]
-                                          ['release_date'],
+                                          [AppStrings.release_date],
                                       movieOverview: upcoming[index]
-                                          ['overview'],
+                                          [AppStrings.overview],
                                       trailers:
                                           trailer != null ? [trailer] : [],
                                       cast: cast ,
@@ -63,7 +65,7 @@ class UpcomingMovies extends StatelessWidget {
                       
                     },
                     child: Container(
-                        padding: EdgeInsets.only(right: 5),
+                        padding: const EdgeInsets.only(right: 5),
                         width: 140,
                         child: Column(
                           children: [
@@ -74,22 +76,18 @@ class UpcomingMovies extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                       image: NetworkImage(
-                                    upcoming[index]['poster_path'] != null
-                                        ? 'https://image.tmdb.org/t/p/w500/' +
-                                            upcoming[index]['poster_path']
-                                        : 'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',
+                                    upcoming[index][AppStrings.poster_path] != null
+                                        ? NetworkPath.networkImagePath  +
+                                            upcoming[index][AppStrings.poster_path]
+                                        : NetworkPath.thumbnail,
                                   )),
                                 ),
                               ),
                             ),
-                            Container(
-                              child: TextFont(
-                                text: upcoming[index]['title'] != null
-                                    ? upcoming[index]['title']
-                                    : upcoming[index]['name'],
-                                size: 16,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            TextFont(
+                              text: upcoming[index][AppStrings.title] ?? upcoming[index][AppStrings.name],
+                              size: 16,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         )));

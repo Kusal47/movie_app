@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-
 import '../Authentication/auth.dart';
 import '../Buttons/button.dart';
 import '../Home Page/home.dart';
 import '../TextField/text_field.dart';
+import '../const/export.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -23,74 +23,72 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Login Page'),
+        title: const Text(AppStrings.login),
         centerTitle: true,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height / 1.15,
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Icon(
-                    Icons.account_circle_outlined,
-                    size: 100,
-                    color: Colors.white,
-                  ),
+                Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(30.0),
+                      child: Icon(
+                        Icons.account_circle_outlined,
+                        size: 100,
+                        color: Colors.white,
+                      ),
+                    ),
+                    TextFields(
+                      controller: emailController,
+                      hinttext: AppStrings.email,
+                      isEmail: true,
+                    ),
+                    TextFields(
+                      controller: passController,
+                      isPassword: true,
+                      hinttext: AppStrings.password,
+                    ),
+                    Buttons(
+                        btnname: AppStrings.loginbtn,
+                        size: 20,
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            await AuthService().Login(
+                                emailController.text, passController.text);
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomePage()));
+                          }
+                          emailController.clear();
+                          passController.clear();
+                        }),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                TextFields(
-                  controller: emailController,
-                  isPassword: false,
-                  hinttext: 'Email',
-                  isEmail: true,
-                  isPhone: false,
-                  isFname: false,
-                  isLname: false,
-                ),
-                TextFields(
-                  controller: passController,
-                  isPassword: true,
-                  hinttext: 'Password',
-                  isEmail: false,
-                  isPhone: false,
-                  isFname: false,
-                  isLname: false,
-                ),
-                Buttons(
-                    btnname: 'Login',
-                    size: 20,
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await AuthService()
-                            .Login(emailController.text, passController.text);
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
-                      }
-                      emailController.clear();
-                      passController.clear();
-                    }),
-                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Don\'t have an account?',
+                    const Text(
+                    AppStrings.noAccount,
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 15),
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     InkWell(
                       child: Text(
-                        'Register Now',
+                        AppStrings.registerNow,
                         style: TextStyle(
                             decoration: TextDecoration.underline,
                             color: Colors.blue[200],
@@ -101,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RegisterPage()));
+                                builder: (context) => const RegisterPage()));
                       },
                     ),
                   ],

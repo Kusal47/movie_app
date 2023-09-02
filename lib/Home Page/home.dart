@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tmdb_api/tmdb_api.dart';
-
 import '../Authentication/auth.dart';
 import '../FontStyle/text_style.dart';
 import '../Login Register/login_page.dart';
@@ -10,6 +9,7 @@ import '../Movie Pages/top_rated_movies.dart';
 import '../Movie Pages/trending_movies.dart';
 import '../Movie Pages/tv_shows.dart';
 import '../Movie Pages/upcoming_movies.dart';
+import '../const/export.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,9 +27,7 @@ class _HomePageState extends State<HomePage> {
   List tvShows = [];
 
 //  to fetch the movies from the api
-  final String apiKey = '3b3e044406dcc9dfd98161380ff671d0';
-  final String apiReadAccessToken =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYjNlMDQ0NDA2ZGNjOWRmZDk4MTYxMzgwZmY2NzFkMCIsInN1YiI6IjY0NDY2YzU4YzhmM2M0MDQ3NTQ1MGZlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qZZN8H99oxomNUmi1oUgZwfNMybxtvJ1T0-Bd_Yfmhw';
+
 
   @override
   void initState() {
@@ -39,7 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   Future fetchMovies() async {
     //initiailizing  TMDB
-    TMDB tmdbWithCustomLogs = TMDB(ApiKeys(apiKey, apiReadAccessToken),
+    TMDB tmdbWithCustomLogs = TMDB(ApiKeys(AppStrings.apiKey, AppStrings.apiReadAccessToken),
         logConfig: const ConfigLogger(
           showLogs: true,
           showErrorLogs: true,
@@ -51,16 +49,14 @@ class _HomePageState extends State<HomePage> {
     Map topRatedMovieResult = await tmdbWithCustomLogs.v3.movies.getTopRated();
     Map upcomingMovieResult = await tmdbWithCustomLogs.v3.movies.getUpcoming();
     Map tvShowResult = await tmdbWithCustomLogs.v3.tv.getPopular();
-    // print(trendingMovieResult['results'][2]);
-    //     print(trendingMovieResult['results'][5]);
 
     //updating the state of the app
     setState(() {
       //storing the results in the trendingMovies list and so on for other lists
-      trendingMovies = trendingMovieResult['results'];
-      topRatedMovies = topRatedMovieResult['results'];
-      upcomingMovies = upcomingMovieResult['results'];
-      tvShows = tvShowResult['results'];
+      trendingMovies = trendingMovieResult[AppStrings.results];
+      topRatedMovies = topRatedMovieResult[AppStrings.results];
+      upcomingMovies = upcomingMovieResult[AppStrings.results];
+      tvShows = tvShowResult[AppStrings.results];
     });
   }
 
@@ -71,7 +67,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: TextFont(text: 'Cinemania'),
+          title: const TextFont(text: AppStrings.appName),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -81,12 +77,11 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => SearchPage(
-                        apiKey: apiKey,
                       ),
                     ),
                   );
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.search,
                   size: 30,
                 ),
@@ -94,24 +89,24 @@ class _HomePageState extends State<HomePage> {
             ),
             PopupMenuButton(itemBuilder: (context) {
               return [
-                PopupMenuItem<int>(
+                const PopupMenuItem<int>(
                   value: 0,
-                  child: Text("My Account"),
+                  child: Text(AppStrings.myAccount),
                 ),
-                PopupMenuItem<int>(
+                const PopupMenuItem<int>(
                   value: 1,
-                  child: Text("Settings"),
+                  child: Text(AppStrings.settings),
                 ),
-                PopupMenuItem<int>(
+                const PopupMenuItem<int>(
                   value: 2,
-                  child: Text("Logout"),
+                  child: Text(AppStrings.logout),
                 ),
               ];
             }, onSelected: (value) async {
               if (value == 0) {
-                print("My Account menu is selected.");
+                // print("My Account menu is selected.");
               } else if (value == 1) {
-                print("Settings menu is selected.");
+                // print("Settings menu is selected.");
               } else if (value == 2) {
                 await AuthService().SignOut();
                 Navigator.pushReplacement(context,
@@ -121,25 +116,21 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body: ListView(
-          physics: BouncingScrollPhysics(
+          physics: const BouncingScrollPhysics(
               decelerationRate: ScrollDecelerationRate.normal),
           children: [
             //passing the list of movies to the TrendingMovies.dart and so on.
             TrendingMovies(
               trending: trendingMovies,
-              apiKey: apiKey,
             ),
             UpcomingMovies(
               upcoming: upcomingMovies,
-              apiKey: apiKey,
             ),
             TopRatedMovies(
               toprated: topRatedMovies,
-              apiKey: apiKey,
             ),
             TvShows(
               tvshows: tvShows,
-              apiKey: apiKey,
             ),
           ],
         ),
