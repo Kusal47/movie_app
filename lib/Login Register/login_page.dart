@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
-import '../Authentication/auth.dart';
+import 'package:movieapp/Login%20Register/viewmodel.dart';
+import 'package:provider/provider.dart';
 import '../Buttons/button.dart';
 import '../Home Page/home.dart';
 import '../TextField/text_field.dart';
 import '../const/export.dart';
 import 'register_page.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    final viewModel = Provider.of<LoginViewModel>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -48,12 +43,12 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     TextFields(
-                      controller: emailController,
+                      controller: viewModel.emailController,
                       hinttext: AppStrings.email,
                       isEmail: true,
                     ),
                     TextFields(
-                      controller: passController,
+                      controller: viewModel.passController,
                       isPassword: true,
                       hinttext: AppStrings.password,
                     ),
@@ -62,15 +57,14 @@ class _LoginPageState extends State<LoginPage> {
                         size: 20,
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            await AuthService().Login(
-                                emailController.text, passController.text);
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
+                            final loginSuccess = await viewModel.performLogin();
+                            if (loginSuccess) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                            }
                           }
-                          emailController.clear();
-                          passController.clear();
                         }),
                     const SizedBox(height: 20),
                   ],
@@ -79,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                    AppStrings.noAccount,
+                      AppStrings.noAccount,
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

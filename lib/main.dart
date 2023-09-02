@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
+import 'package:movieapp/Login%20Register/viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'Home Page/home.dart';
 import 'Login Register/login_page.dart';
 import 'const/export.dart';
@@ -19,24 +21,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return KhaltiScope(
-        publicKey: 'test_public_key_d5d9f63743584dc38753056b0cc737d5',
-        enabledDebugging: true,
-        builder: (context, navKey) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.transparent,
-      ),
-            title: AppStrings.appName,
-            home: const SplashScreen(),
-            navigatorKey: navKey,
-            localizationsDelegates: const [
-              KhaltiLocalizations.delegate,
-            ],
-          );
-        });
+    return ChangeNotifierProvider<LoginViewModel>(
+      create: (_) => LoginViewModel(),
+      child: KhaltiScope(
+          publicKey: 'test_public_key_d5d9f63743584dc38753056b0cc737d5',
+          enabledDebugging: true,
+          builder: (context, navKey) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: Colors.transparent,
+        ),
+              title: AppStrings.appName,
+              home: const SplashScreen(),
+              navigatorKey: navKey,
+              localizationsDelegates: const [
+                KhaltiLocalizations.delegate,
+              ],
+            );
+          }),
+    );
   }
 }
 
