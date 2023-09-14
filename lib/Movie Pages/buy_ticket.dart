@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../Authentication/purchase_service.dart';
+import '../Buttons/outline_buttons.dart';
 import '../FontStyle/text_style.dart';
-import '../Payment Method/esewa.dart';
 import '../Payment Method/khaltipay.dart';
 import '../const/export.dart';
 
@@ -17,15 +19,43 @@ class BuyTicketPage extends StatefulWidget {
 }
 
 class _BuyTicketPageState extends State<BuyTicketPage> {
-  String selectedPaymentMethod = '';
+  String? selectedShow; // Initialize with null
   int selectedTicketCount = 1; // Track the selected ticket count
+
+  Future<void> updateQuantityAndShow(int quantity, String show) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userId = user.uid;
+      final purchaseOrderService = PurchaseOrderService();
+
+      if (selectedShow != show) {
+        // Create a new purchase order collection if the show is changed
+        await purchaseOrderService.createPurchaseOrderCollection(
+          userId,
+          widget.movieName!,
+          quantity,
+          show,
+        );
+        // Update the selected show
+        selectedShow = show;
+      } else {
+        // Update the quantity if the show remains the same
+        await purchaseOrderService.createPurchaseOrderCollection(
+          userId,
+          widget.movieName!,
+          quantity,
+          show,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Buy Ticket'),
+        title: const Text('Purchase Ticket'),
       ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -66,72 +96,34 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
                 size: 20,
               ),
               Container(
-                padding: const EdgeInsets.all(8),
                 color: Colors.grey[900],
                 width: MediaQuery.of(context).size.width,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      children: [
-                        OutlinedButton(
-                          onPressed: () {
-                            // Add logic to handle ticket purchase
-                          },
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.all(8),
-                          ),
-                          child: const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TextFont(
-                                text: 'Morning Show',
-                              ),
-                              TextFont(
-                                text: 'Price: Rs. 175',
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: OutlinedButton(
-                            onPressed: () {},
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.all(8),
-                            ),
-                            child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextFont(
-                                  text: 'Evening Show',
-                                ),
-                                TextFont(
-                                  text: 'Price: Rs. 200',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                    Outlinebuttons(
+                      text: 'Morning Show',
+                      price: 'Rs. 175',
+                      onPressed: () {
+                        // Update the ticket price and show type when the show is selected
+                        updateQuantityAndShow(selectedTicketCount, 'Morning Show');
+                      },
                     ),
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.all(8),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextFont(
-                            text: 'Night Show',
-                          ),
-                          TextFont(
-                            text: 'Price: Rs. 150',
-                          ),
-                        ],
-                      ),
+                    Outlinebuttons(
+                      text: 'Evening Show',
+                      price: 'Rs. 200',
+                      onPressed: () {
+                        // Update the ticket price and show type when the show is selected
+                        updateQuantityAndShow(selectedTicketCount, 'Evening Show');
+                      },
+                    ),
+                    Outlinebuttons(
+                      text: 'Night Show',
+                      price: 'Rs. 150',
+                      onPressed: () {
+                        // Update the ticket price and show type when the show is selected
+                        updateQuantityAndShow(selectedTicketCount, 'Night Show');
+                      },
                     ),
                   ],
                 ),
@@ -164,60 +156,77 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16.0),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Add logic to handle ticket purchase
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          title: const TextFont(
-                            text: 'Payment Method',
-                            color: Colors.black,
-                          ),
-                          content: Container(
-                            height: 80 * 1.2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    EsewaApp(),
-                                    KhaltiApp(
-                                      price: 2,
-                                      productId: 2,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Close',
-                                      style: TextStyle(
-                                          color: Colors.blue, fontSize: 20)),
-                                )
-                              ],
+              SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {
+                      // Add logic to handle ticket purchase
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel Purchase'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add logic to handle ticket purchase
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: const Text('Purchase Ticket'),
-                ),
+                            title: const TextFont(
+                              text: 'Payment Method',
+                              color: Colors.black,
+                            ),
+                            content: Container(
+                              height: 80 * 1.2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                 Row(
+                                    
+                                    children: [
+                                    selectedShow=='Morning Show'?
+                                     KhaltiApp(
+                                     price: 175.0,
+                                     quantity: selectedTicketCount,
+                    ):selectedShow=='Evening Show'?
+                                     KhaltiApp(
+                                     price: 200.0,
+                                     quantity: selectedTicketCount,
+                    ):
+                                     KhaltiApp(
+                                     price: 150.0,
+                                     quantity: selectedTicketCount,
+                    ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Close',
+                                        style: TextStyle(
+                                            color: Colors.blue, fontSize: 20)),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('Purchase Ticket'),
+                  ),
+                ],
               ),
             ],
           ),

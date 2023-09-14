@@ -1,21 +1,24 @@
+
 import 'package:flutter/material.dart';
 import 'package:khalti_flutter/khalti_flutter.dart';
 
 import '../const/export.dart';
 
-
 class KhaltiApp extends StatefulWidget {
-  const KhaltiApp(
-      {super.key, this.price, this.productId, this.isTotalAmt = false});
-  final double? price;
-  final int? productId;
-  final bool isTotalAmt;
+  const KhaltiApp({
+    super.key, required this.price, required this.quantity,
+  });
+  final double price;
+  final int quantity;
+
   @override
   State<KhaltiApp> createState() => _KhaltiAppState();
 }
 
 class _KhaltiAppState extends State<KhaltiApp> {
   String referenceId = '';
+ 
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -35,17 +38,19 @@ class _KhaltiAppState extends State<KhaltiApp> {
 
   payKhalti() {
     KhaltiScope.of(context).pay(
-        config: PaymentConfig(
-          amount: widget.price!.toInt() * 100,
-          productIdentity: widget.productId.toString(),
-          productName: 'Product Name',
-          mobile: '9840454804',
-          mobileReadOnly: true,
-        ),
-        preferences: [PaymentPreference.khalti],
-        onSuccess: onSuccess,
-        onFailure: onFailure,
-        onCancel: onCancel);
+      config: PaymentConfig(
+        amount: ( widget.price*widget.quantity* 100).toInt(),
+        productIdentity:
+            'Product Name', // Update with the appropriate product identity
+        productName: 'Product Name', // Update with the appropriate product name
+        mobile: '9840454804',
+        mobileReadOnly: true,
+      ),
+      preferences: [PaymentPreference.khalti],
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+      onCancel: onCancel,
+    );
   }
 
   void onSuccess(PaymentSuccessModel success) {
@@ -60,7 +65,6 @@ class _KhaltiAppState extends State<KhaltiApp> {
                       setState(() {
                         referenceId = success.idx;
                       });
-                    
                     },
                     child: Text('Ok'))
               ],
