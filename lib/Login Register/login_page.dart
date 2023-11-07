@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:movieapp/Login%20Register/viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../Buttons/button.dart';
-import '../Home Page/home.dart';
 import '../TextField/text_field.dart';
 import '../const/export.dart';
 import 'register_page.dart';
@@ -12,7 +11,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final viewModel = Provider.of<LoginViewModel>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -23,16 +22,14 @@ class LoginPage extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 1.15,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15, right: 10, top: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Form(
+                key: formKey,
+                child: Column(
                   children: [
                     const Padding(
                       padding: EdgeInsets.all(30.0),
@@ -43,63 +40,62 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     TextFields(
+                      text: AppStrings.email,
                       controller: viewModel.emailController,
-                      hinttext: AppStrings.email,
+                      hinttext: AppStrings.emailhint,
                       isEmail: true,
                     ),
                     TextFields(
                       controller: viewModel.passController,
-                      isPassword: true,
-                      hinttext: AppStrings.password,
+                      isLoginPassword: true,
+                      hinttext: AppStrings.passwordhint,
+                      text: AppStrings.password,
                     ),
                     Buttons(
                         btnname: AppStrings.loginbtn,
                         size: 20,
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final loginSuccess = await viewModel.performLogin();
-                            if (loginSuccess) {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()));
-                            }
-                          }
+                            if (formKey.currentState!.validate()) {
+                        await viewModel.loginUser(context);
+
+                      }
                         }),
                     const SizedBox(height: 20),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      AppStrings.noAccount,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15),
-                    ),
-                    const SizedBox(width: 5),
-                    InkWell(
-                      child: Text(
-                        AppStrings.registerNow,
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Colors.blue[200],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const RegisterPage()));
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
+              ),
+                 Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          AppStrings.noAccount,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
+                        ),
+                        const SizedBox(width: 5),
+                        InkWell(
+                          child: Text(
+                            AppStrings.registerNow,
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.blue[200],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const RegisterPage()));
+                          },
+                        ),
+                      ],
+                    )
+                 
+            ],
           ),
         ),
       ),

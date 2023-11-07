@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
@@ -45,33 +47,39 @@ class _RegisterPageState extends State<RegisterPage> {
               key: _formKey,
               child: Column(children: [
                 TextFields(
+                  text: AppStrings.fName,
                   controller: firstnameC,
-                  hinttext:AppStrings.fName,
+                  hinttext: AppStrings.fNamehint,
                   isFname: true,
                 ),
                 TextFields(
+                  text: AppStrings.lName,
                   controller: lastnameC,
-                  hinttext: AppStrings.lName,
+                  hinttext: AppStrings.lNamehint,
                   isLname: true,
                 ),
                 TextFields(
+                  text: AppStrings.phone,
                   controller: phoneC,
-                  hinttext: AppStrings.phone,
+                  hinttext: AppStrings.phonehint,
                   isPhone: true,
                 ),
                 TextFields(
+                  text: AppStrings.email,
                   controller: emailC,
-                  hinttext: AppStrings.email,
+                  hinttext: AppStrings.emailhint,
                   isEmail: true,
                 ),
                 TextFields(
+                  text: AppStrings.password,
                   controller: passC,
-                  hinttext: AppStrings.password,
+                  hinttext: AppStrings.passwordhint,
                   isPassword: true,
                 ),
                 TextFields(
+                  text: AppStrings.confirmPassword,
                   controller: passConfirm,
-                  hinttext: AppStrings.confirmPassword,
+                  hinttext: AppStrings.confirmPasswordhint,
                   isPassword: true,
                   isConfirm: true,
                   confirmPasswordController: passC,
@@ -86,7 +94,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    const TextFont(text:AppStrings.TOC, size: 18, color: Colors.white),
+                    const TextFont(
+                        text: AppStrings.TOC, size: 18, color: Colors.white),
                   ],
                 ),
                 Buttons(

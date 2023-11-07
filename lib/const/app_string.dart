@@ -16,11 +16,17 @@ class AppStrings {
 
   static const String results = "results";
   static const String email = "Email";
+  static const String emailhint = "Enter your Email";
   static const String password = "Password";
+  static const String passwordhint = "Enter your Password";
   static const String fName = "First Name";
+  static const String fNamehint = "Enter your First Name";
   static const String lName = "Last Name";
+  static const String lNamehint = "Enter your Last Name";
   static const String phone = "Phone Number";
+  static const String phonehint = "Enter your Phone Number";
   static const String confirmPassword = "Confirm Password";
+  static const String confirmPasswordhint = "Enter your Confirm Password";
 
 //Strings for login Page
   static const String login = "Login Page";
@@ -70,9 +76,6 @@ class AppStrings {
   static const String id = "id";
   static const String users = "users";
 
-  //Validation Strings
-  static const String required_ConfirmPass = "Please Confirm your Password";
-  static const String validate_ConfirmPass = "Password did not match";
 
   //FirstName Validation
   static const String required_firstName = "Please enter your First name";
@@ -94,4 +97,21 @@ class AppStrings {
   static const String required_Password = "Please enter your Password";
   static const String validate_Password =
       "Password must be atleast 8 character";
+
+  static const String imageEditLabel = "Edit with Ease, Create with Joy";
+  static const String cameraButtonLabel = "Use Camera";
+  static const String galleryButtonLabel = "Select the photo from Gallery";
+  static const String imageType = "Png or Jpg";
+  
+  static const String validate_Password_Uppercase = "Password must have Uppercase";
+  static const String validate_Password_Lowercase = "Password must have Lowercase";
+  static const String validate_Password_Number = "Password must have Number";
+  static const String validate_Password_SpecialCharacter = "Password must have Special Character";
+  static const String validate_Password_Length =
+      "Password length must be between 8 to 15";
+        //Validation Strings
+  // ignore: constant_identifier_names
+  static const String required_ConfirmPass = "Please Confirm your Password";
+  // ignore: constant_identifier_names
+  static const String validate_ConfirmPass = "Password did not match";
 }
